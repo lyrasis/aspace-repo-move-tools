@@ -1,2 +1,8 @@
+archivesspace/
+exports/*.json
+lib/gems/
+lib/deps/
+lib/*.jar
 /*.json
 .idea
+*.zip
