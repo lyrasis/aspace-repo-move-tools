@@ -78,6 +78,12 @@ response. Pay attention to the id:
 
 _Note: if you're creating one repository in an empty ArchivesSpace the id will be 2._
 
+You can also view the list of available repositories:
+
+```bash
+./list_repositories.sh http://localhost:8089 admin admin
+```
+
 Next, proceed to import:
 
 ```bash
@@ -91,4 +97,4 @@ intrinsic relationship between the repository ids for source and destination
 (in the example source repository id 4 is imported into destination repository
 id 2)._
 
-Records should be created in the local repository.
+Records should have been created in the local repository.
