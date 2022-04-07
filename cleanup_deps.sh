@@ -2,4 +2,5 @@
 
 rm -rf archivesspace*.zip
 rm -rf archivesspace/
-rm -rf lib/deps lib/gems lib/*.jar
+
+./resolve_deps.sh

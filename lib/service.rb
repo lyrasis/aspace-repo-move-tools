@@ -12,18 +12,15 @@ class Service
     @session = login!
   end
 
-
   def get_ids_for_type(record_type)
     get_json("#{repo_uri}/#{plural(record_type)}", {
       :all_ids => true
     })
   end
 
-
   def get_record(uri)
     get_json(uri)
   end
-
 
   def get_records_for_type(record_type, ids)
     get_json("#{repo_uri}/#{plural(record_type)}", {
@@ -31,14 +28,11 @@ class Service
     })
   end
 
-
   def repo_uri
     "/repositories/#{@repo_id}"
   end
 
-
   private
-
 
   def get_json(path, params = {})
     response = get(path, params)
@@ -52,7 +46,6 @@ class Service
     do_http_request(url, params, request)
   end
 
-
   def do_http_request(url, params = {}, request)
     use_ssl = url.scheme == 'https' ? true : false
     Net::HTTP.start(url.host, url.port, { use_ssl: use_ssl }) {|http|
@@ -61,10 +54,8 @@ class Service
     }
   end
 
-
   def login!
     path = "/users/#{@username}/login"
-
     url = build_url(path)
 
     response = Net::HTTP.post_form(url, {:password => @password, :expiring => false})
@@ -74,7 +65,6 @@ class Service
     end
 
     @session = JSON(response.body).fetch('session')
-
     @session
   end
 

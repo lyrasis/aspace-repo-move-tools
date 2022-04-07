@@ -1,5 +1,5 @@
-require 'net/http'
 require 'jsonmodel'
+require 'tempfile'
 
 def show_usage
   raise "Usage: #{$0} <backend URL> <repo id> <username> <password> <import file>"
@@ -12,6 +12,7 @@ $password = ARGV.fetch(3) { show_usage }
 $import_file = ARGV.fetch(4) { show_usage }
 
 $basedir = File.expand_path(File.join(File.dirname(__FILE__)))
+$import_file = File.join($basedir, "..", "exports", $import_file)
 
 include JSONModel
 
@@ -37,7 +38,6 @@ def self.login!(username, password)
   end
 end
 
-
 def batch_import(file)
   backend_uri = URI(File.join(JSONModel::HTTP.backend_url, "/repositories/#{$repo_id}/batch_imports?skip_results=true&migration=true"))
   p "-- Target: #{backend_uri.to_s}"
@@ -47,7 +47,6 @@ def batch_import(file)
     end
   end
 end
-
 
 p "-- Importing: #{$import_file}"
 file_contents = File.read($import_file)

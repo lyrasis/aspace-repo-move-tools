@@ -10,7 +10,9 @@ Currently tested version: `v3.2.0`.
 
 ## Setup
 
-Begin by pulling all of the project dependencies:
+Install [Rbenv](#).
+
+Then pull all of the project dependencies:
 
 ```bash
 ./resolve_deps.sh
@@ -32,8 +34,8 @@ A convenient way of testing the export process is to target one of the public
 ArchivesSpace test servers:
 
 ```bash
-# download the "test" repository from test.archivesspace.org
-./export.sh https://test.archivesspace.org/staff/api 5 admin admin
+# download the "Space" repository from test.archivesspace.org
+./export.sh https://test.archivesspace.org/staff/api 4 admin admin
 ```
 
 The json output will be saved to the `export` folder as
@@ -58,7 +60,9 @@ Wait for ArchivesSpace to start then create a new repository. After that:
 
 ```bash
 # import into "local" test repository
-./import.sh http://localhost:8089 2 admin admin ./exports/exported_5.json
+./import.sh http://localhost:8089 2 admin admin exported_4.json
 ```
+
+_Note: the import file is expected to be in the `exports` folder._
 
 Records should be created in the local repository.

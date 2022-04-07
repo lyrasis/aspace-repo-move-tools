@@ -11,10 +11,9 @@ $user = ARGV.fetch(2) { show_usage }
 $password = ARGV.fetch(3) { show_usage }
 
 $basedir = File.expand_path(File.join(File.dirname(__FILE__)))
+export_file = File.join($basedir, "..", "exports", "exported_#{$repo_id}.json")
 
 @service = Service.new($backend_url, $repo_id, $user, $password)
-
-export_file = File.join($basedir, "..", "exports", "exported_#{$repo_id}.json")
 
 @exported_uris = []
 @linked_uris = []
@@ -49,7 +48,9 @@ end
 File.open(export_file, "w") do |out|
   exported_records = []
 
-  records_to_import = ['resource', 'archival_object', 'digital_object', 'digital_object_component', 'accession', 'classification']
+  records_to_import = [
+    'resource', 'archival_object', 'top_container', 'digital_object', 'digital_object_component', 'accession', 'classification',
+  ]
 
   records_to_import.each do |record_type|
     p "-- Get all of type: #{record_type}"
