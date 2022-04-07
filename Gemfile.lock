@@ -3,21 +3,39 @@ GEM
   specs:
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
+    archivesspace-client (0.1.11)
+      dry-cli (~> 0.7)
+      httparty (~> 0.14)
+      json (~> 2.0)
+      nokogiri (~> 1.10)
     atomic (1.1.101-java)
     concurrent-ruby (1.1.10)
+    dry-cli (0.7.0)
+    httparty (0.20.0)
+      mime-types (~> 3.0)
+      multi_xml (>= 0.5.2)
     i18n (1.10.0)
       concurrent-ruby (~> 1.0)
+    json (2.6.1-java)
     json-schema (2.8.1)
       addressable (>= 2.4)
+    mime-types (3.4.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2022.0105)
+    multi_xml (0.6.0)
     multipart-post (2.1.1)
     net-http-persistent (2.8)
+    nokogiri (1.12.5-java)
+      racc (~> 1.4)
     public_suffix (4.0.6)
+    racc (1.6.0-java)
 
 PLATFORMS
   universal-java-11
 
 DEPENDENCIES
   addressable
+  archivesspace-client
   atomic
   i18n
   json-schema

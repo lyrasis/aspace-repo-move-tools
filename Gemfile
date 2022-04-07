@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'addressable'
+gem 'archivesspace-client'
 gem 'atomic'
 gem 'i18n'
 gem 'json-schema'

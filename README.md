@@ -20,7 +20,7 @@ Then pull all of the project dependencies:
 
 ### Reset
 
-Use `./cleanup_deps.sh` to remove all downloaded dependencies & rerun setup.
+Use `./cleanup_deps.sh` to remove all downloaded dependencies then rerun setup.
 
 ## Export usage
 
@@ -56,7 +56,21 @@ instance of ArchivesSpace using Docker:
 docker-compose up --detach
 ```
 
-Wait for ArchivesSpace to start then create a new repository. After that:
+Wait for ArchivesSpace to start then create a new repository:
+
+```bash
+./create_repository.sh http://localhost:8089 admin admin
+```
+
+If that command is successful it will create a new repository:
+
+- repo_code: 'repository_importer',
+- name: 'Repository Importer Archive',
+- agent_contact_name: 'Repository Importer'
+
+With an empty ArchivesSpace instance the repository id will be 2.
+
+Next, proceed to import:
 
 ```bash
 # import into "local" test repository
