@@ -1,12 +1,13 @@
 require 'archivesspace/client'
 
 def show_usage
-  raise "Usage: #{$0} <backend URL> <username> <password>"
+  raise "Usage: #{$0} <backend URL> <username> <password> <repository code>"
 end
 
 backend_url = ARGV.fetch(0) { show_usage }
 user        = ARGV.fetch(1) { show_usage }
 password    = ARGV.fetch(2) { show_usage }
+repo_code   = ARGV.fetch(3) { show_usage }
 config      = ArchivesSpace::Configuration.new(
   {
     base_uri: backend_url,
@@ -21,9 +22,9 @@ config      = ArchivesSpace::Configuration.new(
 client = ArchivesSpace::Client.new(config).login
 
 repo_data = {
-  repo_code: 'repository_importer',
-  name: 'Repository Importer Archive',
-  agent_contact_name: 'Repository Importer'
+  repo_code: repo_code,
+  name: repo_code.upcase,
+  agent_contact_name: repo_code.upcase
 }
 repository = ArchivesSpace::Template.process(:repository_with_agent, repo_data)
 
