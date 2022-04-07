@@ -18,6 +18,15 @@ export_file = File.join($basedir, "..", "exports", "exported_#{$repo_id}.json")
 @exported_uris = []
 @linked_uris = []
 
+BATCH_SIZE_PER_RECORD_TYPE = {
+  'resource' => 10,
+  'archival_object' => 50,
+  'digital_object' => 25,
+  'digital_object_component' => 50,
+  'accession' => 25,
+  'classification' => 10,
+}
+
 def prepare_record_for_export(record)
   record.delete('id')
   record
@@ -47,15 +56,12 @@ end
 
 File.open(export_file, "w") do |out|
   exported_records = []
-
-  records_to_import = [
-    'resource', 'archival_object', 'top_container', 'digital_object', 'digital_object_component', 'accession', 'classification',
-  ]
+  records_to_import = BATCH_SIZE_PER_RECORD_TYPE.keys
 
   records_to_import.each do |record_type|
     p "-- Get all of type: #{record_type}"
     ids = @service.get_ids_for_type(record_type)
-    ids.each_slice(50).each do |id_set|\
+    ids.each_slice(BATCH_SIZE_PER_RECORD_TYPE.fetch(record_type, 10)).each do |id_set|
       p id_set
       records = @service.get_records_for_type(record_type, id_set)
 
