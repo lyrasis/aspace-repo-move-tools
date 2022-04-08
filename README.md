@@ -99,9 +99,7 @@ Next, proceed to import:
 ```
 
 _Note: the import file is expected to be in the `exports` folder. There is no
-intrinsic relationship between the repository ids for source and destination
-(in the example source repository id 4 is imported into destination repository
-id 2)._
+intrinsic relationship between the repository ids for source and destination._
 
 Records should have been created in the local repository.
 
