@@ -19,16 +19,38 @@ export_file = File.join($basedir, "..", "exports", "exported_#{$repo_id}.json")
 @linked_uris = []
 
 BATCH_SIZE_PER_RECORD_TYPE = {
+  'classification' => 10,
+  'classification_term' => 50,
+  'top_container' => 50,
   'resource' => 10,
   'archival_object' => 50,
+  'accession' => 25,
   'digital_object' => 25,
   'digital_object_component' => 50,
-  'accession' => 25,
-  'classification' => 10,
 }
+SKIP_URI = 'event|tree'
 
 def prepare_record_for_export(record)
   record.delete('id')
+
+  # Cleanup, remove refs to non-existent repositories
+  if record.key?('used_within_repositories') && record['used_within_repositories'].any?
+    record['used_within_repositories'] = [@service.repo_uri]
+    record['used_within_published_repositories'] = [@service.repo_uri]
+  end
+
+  # Doesn't seem to be broadly used and doesn't break if removed
+  record.delete('created_for_collection') if record.key?('created_for_collection')
+
+  # Lets not bring in events
+  record['linked_events'] = [] if record.key?('linked_events')
+
+  if record.key?('lang_materials') && record['jsonmodel_type'] == 'digital_object'
+    record['lang_materials'].each do |r|
+      # Not supported by schema, throws errors (and this is super rare data)
+      r['notes'].delete_if { |n| n['jsonmodel_type'] == 'note_digital_object' } if r.key?('notes')
+    end
+  end
   record
 end
 
@@ -81,7 +103,7 @@ File.open(export_file, "w") do |out|
   while(true)
 
     @linked_uris.clone.each do |uri|
-      if @exported_uris.include?(uri) || uri == @service.repo_uri || uri =~ /tree/
+      if @exported_uris.include?(uri) || uri == @service.repo_uri || uri =~ /#{SKIP_URI}/
         @linked_uris.delete(uri)
         next
       end

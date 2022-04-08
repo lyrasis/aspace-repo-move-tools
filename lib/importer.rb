@@ -43,7 +43,7 @@ def batch_import(file)
   p "-- Target: #{backend_uri.to_s}"
   JSONModel::HTTP.post_json_file(backend_uri, file) do |response|
     response.read_body do |chunk|
-      p chunk
+      puts chunk
     end
   end
 end

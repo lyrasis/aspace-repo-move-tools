@@ -47,6 +47,9 @@ ArchivesSpace test servers:
 The json output will be saved to the `export` folder as
 `exported_<source repo id>.json`.
 
+_Note: test.archivesspace.org is deployed from the ASpace `master` branch
+and therefore should only be used with an ASpace src destination for import._
+
 ## Import usage
 
 ```bash
@@ -61,6 +64,9 @@ instance of ArchivesSpace using Docker:
 ```bash
 docker-compose up --detach
 ```
+
+_Note: the Docker instance uses a `release` version of ASpace and should only
+be used to import data from a source using the same version._
 
 Wait for ArchivesSpace to start then create a new repository:
 
@@ -88,8 +94,8 @@ Next, proceed to import:
 
 ```bash
 # import into local "test" repository
-./import.sh http://localhost:8089 $repo_id admin admin exported_4.json
-./import.sh http://localhost:8089 2 admin admin exported_4.json
+./import.sh http://localhost:8089 $repo_id admin admin exported_2.json
+./import.sh http://localhost:8089 2 admin admin exported_2.json
 ```
 
 _Note: the import file is expected to be in the `exports` folder. There is no
@@ -98,3 +104,24 @@ intrinsic relationship between the repository ids for source and destination
 id 2)._
 
 Records should have been created in the local repository.
+
+## All-in-one tester
+
+Using ASPace src example. Setup and run ASpace from src, when ready:
+
+```bash
+./create_repository.sh http://localhost:4567 admin admin "test_2"
+./create_repository.sh http://localhost:4567 admin admin "test_3"
+./create_repository.sh http://localhost:4567 admin admin "test_4"
+./create_repository.sh http://localhost:4567 admin admin "test_5"
+
+./export.sh https://test.archivesspace.org/staff/api 2 admin admin
+./export.sh https://test.archivesspace.org/staff/api 3 admin admin
+./export.sh https://test.archivesspace.org/staff/api 4 admin admin
+./export.sh https://test.archivesspace.org/staff/api 5 admin admin
+
+./import.sh http://localhost:4567 2 admin admin exported_2.json
+./import.sh http://localhost:4567 3 admin admin exported_3.json
+./import.sh http://localhost:4567 4 admin admin exported_4.json
+./import.sh http://localhost:4567 5 admin admin exported_5.json
+```
