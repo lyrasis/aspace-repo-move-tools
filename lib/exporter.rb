@@ -17,6 +17,7 @@ export_file = File.join($basedir, "..", "exports", "exported_#{$repo_id}.json")
 
 @exported_uris = []
 @linked_uris = []
+@unparented_records = []
 
 BATCH_SIZE_PER_RECORD_TYPE = {
   'classification' => 10,
@@ -29,6 +30,18 @@ BATCH_SIZE_PER_RECORD_TYPE = {
   'digital_object_component' => 50,
 }
 SKIP_URI = 'event|tree'
+
+# Ensure records with parents aren't processed before the parent
+def unparented_rlshp?(record)
+  parent = record['parent']
+  return unless parent
+  if @exported_uris.include?(parent['ref']) && !@unparented_records.find { |r| r['uri'] == parent['ref'] }
+    return
+  end # we already handled the parent
+
+  @unparented_records << record unless @unparented_records.include?(record)
+  true
+end
 
 def prepare_record_for_export(record)
   record.delete('id')
@@ -95,8 +108,18 @@ File.open(export_file, "w") do |out|
           end
         end
 
+        next if unparented_rlshp?(record)
         exported_records << prepare_record_for_export(record)
       }
+    end
+    # re-add "unparented" records
+    until @unparented_records.empty?
+      @unparented_records.delete_if do |record|
+        next if unparented_rlshp?(record) # subseries and such
+        p "-- re-adding unparented record: #{record['uri']}"
+        exported_records << prepare_record_for_export(record)
+        true
+      end
     end
   end
 
