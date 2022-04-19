@@ -7,14 +7,14 @@ def show_usage
   raise "Usage: #{$PROGRAM_NAME} <backend URL> <repo id> <username> <password> <import file>"
 end
 
-$backend_url = ARGV.fetch(0) { show_usage }
-$repo_id = ARGV.fetch(1) { show_usage }
-$user = ARGV.fetch(2) { show_usage }
-$password = ARGV.fetch(3) { show_usage }
-$import_file = ARGV.fetch(4) { show_usage }
+BACKEND_URL = ARGV.fetch(0) { show_usage }
+REPO_ID = ARGV.fetch(1) { show_usage }
+USER = ARGV.fetch(2) { show_usage }
+PASSWORD = ARGV.fetch(3) { show_usage }
+import_file = ARGV.fetch(4) { show_usage }
 
-$basedir = File.expand_path(File.join(File.dirname(__FILE__)))
-$import_file = File.join($basedir, '..', 'exports', $import_file)
+BASE_DIR = File.expand_path(File.join(File.dirname(__FILE__)))
+import_file = File.join(BASE_DIR, '..', 'exports', import_file)
 
 include JSONModel
 
@@ -25,7 +25,7 @@ class PermissiveValidator
 end
 
 JSONModel.init(client_mode: true,
-               url: $backend_url,
+               url: BACKEND_URL,
                enum_source: PermissiveValidator.new)
 
 def self.login!(username, password)
@@ -42,7 +42,7 @@ end
 
 def batch_import(file)
   backend_uri = URI(File.join(JSONModel::HTTP.backend_url,
-                              "/repositories/#{$repo_id}/batch_imports?skip_results=true&migration=true"))
+                              "/repositories/#{REPO_ID}/batch_imports?skip_results=true&migration=true"))
   p "-- Target: #{backend_uri}"
   JSONModel::HTTP.post_json_file(backend_uri, file) do |response|
     response.read_body do |chunk|
@@ -51,14 +51,14 @@ def batch_import(file)
   end
 end
 
-p "-- Importing: #{$import_file}"
-file_contents = File.read($import_file)
-file_contents.gsub!(/REPO_ID_GOES_HERE/, $repo_id)
+p "-- Importing: #{import_file}"
+file_contents = File.read(import_file)
+file_contents.gsub!(/REPO_ID_GOES_HERE/, REPO_ID)
 tmp_file = Tempfile.new('foo')
 File.open(tmp_file, 'w') { |file| file.puts file_contents }
 
 begin
-  login!($user, $password)
+  login!(USER, PASSWORD)
   batch_import(tmp_file.path)
 ensure
   tmp_file&.unlink

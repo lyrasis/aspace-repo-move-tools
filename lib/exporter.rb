@@ -7,15 +7,15 @@ def show_usage
   raise "Usage: #{$PROGRAM_NAME} <backend URL> <repo id> <username> <password>"
 end
 
-$backend_url = ARGV.fetch(0) { show_usage }
-$repo_id = ARGV.fetch(1) { show_usage }
-$user = ARGV.fetch(2) { show_usage }
-$password = ARGV.fetch(3) { show_usage }
+BACKEND_URL = ARGV.fetch(0) { show_usage }
+REPO_ID = ARGV.fetch(1) { show_usage }
+USER = ARGV.fetch(2) { show_usage }
+PASSWORD = ARGV.fetch(3) { show_usage }
 
-$basedir = File.expand_path(File.join(File.dirname(__FILE__)))
-export_file = File.join($basedir, '..', 'exports', "exported_#{$repo_id}.json")
+BASE_DIR = File.expand_path(File.join(File.dirname(__FILE__)))
+EXPORT_FILE = File.join(BASE_DIR, '..', 'exports', "exported_#{REPO_ID}.json")
 
-@service = Service.new($backend_url, $repo_id, $user, $password)
+@service = Service.new(BACKEND_URL, REPO_ID, USER, PASSWORD)
 
 @exported_uris = []
 @linked_uris = []
@@ -106,7 +106,7 @@ def extract_links(hash_or_array)
   uris
 end
 
-File.open(export_file, 'w') do |out|
+File.open(EXPORT_FILE, 'w') do |out|
   exported_records = []
   records_to_import = BATCH_SIZE_PER_RECORD_TYPE.keys
 
@@ -168,9 +168,9 @@ File.open(export_file, 'w') do |out|
   out.puts exported_records.to_json
 end
 
-file_contents = File.read(export_file)
+file_contents = File.read(EXPORT_FILE)
 file_contents.gsub!(/#{@service.repo_uri}/, '/repositories/REPO_ID_GOES_HERE')
-File.open(export_file, 'w') { |file| file.puts file_contents }
+File.open(EXPORT_FILE, 'w') { |file| file.puts file_contents }
 
 p '--'
-p "-- Output file: #{export_file}"
+p "-- Output file: #{EXPORT_FILE}"

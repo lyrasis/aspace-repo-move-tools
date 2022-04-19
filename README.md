@@ -127,5 +127,8 @@ Using ASpace src example. Setup and run ASpace from src, when ready:
 ## Dev
 
 ```bash
+# rubocop linter
+bundle exec rubocop lib/*.rb
+# with autocorrect
 bundle exec rubocop -a lib/*.rb
 ```
