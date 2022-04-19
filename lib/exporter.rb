@@ -43,7 +43,15 @@ def unparented_rlshp?(record)
   true
 end
 
-def prepare_record_for_export(record)
+# Remove the related_agent link if the related_agent uri is already in 
+# @exported_uris. This assumes that the related_agent link is already expressed
+# via the associated agent record
+def dedup_related_agents(record)
+  return unless record['related_agents']
+  record['related_agents'].delete_if{|r| @exported_uris.include?(r['ref'])}
+end
+
+def prepare_record_for_export(record) 
   record.delete('id')
 
   # Cleanup, remove refs to non-existent repositories
@@ -58,12 +66,21 @@ def prepare_record_for_export(record)
   # Lets not bring in events
   record['linked_events'] = [] if record.key?('linked_events')
 
+  # Skip related accessions so the import doesn't duplicate related record links
+  # Related Resources under accessions will create the link
+  record['related_accessions'] = [] if record.key?('related_accessions')
+
   if record.key?('lang_materials') && record['jsonmodel_type'] == 'digital_object'
     record['lang_materials'].each do |r|
       # Not supported by schema, throws errors (and this is super rare data)
       r['notes'].delete_if { |n| n['jsonmodel_type'] == 'note_digital_object' } if r.key?('notes')
     end
   end
+  
+  if record.key?('related_agents')
+    dedup_related_agents(record)
+  end
+
   record
 end
 
