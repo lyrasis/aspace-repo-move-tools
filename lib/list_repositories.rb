@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'archivesspace/client'
 
 def show_usage
-  raise "Usage: #{$0} <backend URL> <username> <password>"
+  raise "Usage: #{$PROGRAM_NAME} <backend URL> <username> <password>"
 end
 
 backend_url = ARGV.fetch(0) { show_usage }
@@ -21,9 +23,9 @@ config      = ArchivesSpace::Configuration.new(
 client = ArchivesSpace::Client.new(config).login
 
 begin
-  puts "repo_code,uri"
+  puts 'repo_code,uri'
   client.all('repositories').each do |repository|
-    puts "#{repository["repo_code"]},#{repository["uri"]}"
+    puts "#{repository['repo_code']},#{repository['uri']}"
   end
 rescue ArchivesSpace::RequestError => e
   puts e.message

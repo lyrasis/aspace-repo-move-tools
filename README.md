@@ -105,7 +105,7 @@ Records should have been created in the local repository.
 
 ## All-in-one tester
 
-Using ASPace src example. Setup and run ASpace from src, when ready:
+Using ASpace src example. Setup and run ASpace from src, when ready:
 
 ```bash
 ./create_repository.sh http://localhost:4567 admin admin "test_2"
@@ -122,4 +122,10 @@ Using ASPace src example. Setup and run ASpace from src, when ready:
 ./import.sh http://localhost:4567 3 admin admin exported_3.json
 ./import.sh http://localhost:4567 4 admin admin exported_4.json
 ./import.sh http://localhost:4567 5 admin admin exported_5.json
+```
+
+## Dev
+
+```bash
+bundle exec rubocop -a lib/*.rb
 ```

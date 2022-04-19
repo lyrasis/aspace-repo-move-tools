@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'archivesspace/client'
 
 def show_usage
-  raise "Usage: #{$0} <backend URL> <username> <password> <repository code>"
+  raise "Usage: #{$PROGRAM_NAME} <backend URL> <username> <password> <repository code>"
 end
 
 backend_url = ARGV.fetch(0) { show_usage }
@@ -30,9 +32,7 @@ repository = ArchivesSpace::Template.process(:repository_with_agent, repo_data)
 
 begin
   response = client.post('/repositories/with_agent', repository)
-  if response.result.success?
-    puts "Successfully created repository: #{repo_data[:repo_code]}"
-  end
+  puts "Successfully created repository: #{repo_data[:repo_code]}" if response.result.success?
   puts response.parsed
 rescue ArchivesSpace::RequestError => e
   puts e.message
