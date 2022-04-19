@@ -29,7 +29,7 @@ BATCH_SIZE_PER_RECORD_TYPE = {
   'digital_object' => 25,
   'digital_object_component' => 50,
 }
-SKIP_URI = 'event|tree'
+SKIP_URI = 'tree'
 
 # Ensure records with parents aren't processed before the parent
 def unparented_rlshp?(record)
@@ -64,7 +64,7 @@ def prepare_record_for_export(record)
   record.delete('created_for_collection') if record.key?('created_for_collection')
 
   # Lets not bring in events
-  record['linked_events'] = [] if record.key?('linked_events')
+  # record['linked_events'] = [] if record.key?('linked_events')
 
   # Skip related accessions so the import doesn't duplicate related record links
   # Related Resources under accessions will create the link
