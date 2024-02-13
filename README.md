@@ -18,6 +18,8 @@ Then pull all of the project dependencies:
 ./resolve_deps.sh
 ```
 
+In order for this to work, you need to use a monkey-patched version of the `streaming_import.rb` that changes the order in which things get created. Replace the `streaming-import.rb` file in your ArchivesSpace instance with this version: https://gist.github.com/eightBitter/113e95e10a9a44e82f9edfab8f54ad1e
+
 ### Reset
 
 Use `./cleanup_deps.sh` to remove all downloaded dependencies then rerun setup.
