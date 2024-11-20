@@ -10,6 +10,12 @@ require_relative 'cycle_finder'
 class StreamingImport
   include JSONModel
 
+  GLOBAL_REC_MODELS_WITH_RELS = %w[subject container_profile
+                                   location_profile].freeze
+  GLOBAL_REC_MODELS_WITHOUT_RELS = %w[agent_corporate_entity agent_family
+                                      agent_person agent_software
+                                      location].freeze
+
   def initialize(stream, ticker, import_canceled = false, migration = false)
     @import_canceled = import_canceled || Atomic.new(false)
     @migration = migration ? Atomic.new(true) : Atomic.new(false)
@@ -45,6 +51,14 @@ class StreamingImport
       @dependencies, @position_offsets = load_dependencies
     end
 
+    with_status('Determining jsonmodel_types included in import') do
+      @jsonmodel_types = distinct_jsonmodel_types_in_import
+    end
+
+    @nonglobal_rec_models = @jsonmodel_types -
+                            GLOBAL_REC_MODELS_WITH_RELS -
+                            GLOBAL_REC_MODELS_WITHOUT_RELS
+
     @limbs_for_reattaching = {}
   end
 
@@ -60,64 +74,18 @@ class StreamingImport
   end
 
   def process
-    round = 0
     finished = true
 
     begin
       with_status('Creating global records') do
-        create_global_records(%w[subject container_profile location_profile], with_rlshp: true)
-        create_global_records(
-          %w[agent_corporate_entity agent_family agent_person agent_software location], with_rlshp: false
-        )
+        create_global_records(GLOBAL_REC_MODELS_WITH_RELS, with_rlshp: true)
+        create_global_records(GLOBAL_REC_MODELS_WITHOUT_RELS, with_rlshp: false)
       end
 
-      with_status('Looking for cyclic relationships') do
-        uris_causing_cycles = []
-
-        # We'll skip this because we're not using it anyway (we're de-optimizing 'cus issues)
-        # CycleFinder.new(@dependencies, @ticker).each do |cycle_uri|
-        #   uris_causing_cycles << cycle_uri unless uris_causing_cycles.include?(cycle_uri)
-        # end
-
-        create_records_without_relationships(uris_causing_cycles)
-      end
-
-      # Now we know our data is acyclic, we can run rounds without thinking
-      # about it.
-      while true
-        round += 1
-
-        finished = true
-        progressed = false
-
-        with_status("Saving records: cycle #{round}") do
-          @ticker.tick_estimate = @jstream.count
-          @jstream.each do |rec|
-            abort_if_import_canceled
-
-            uri = rec['uri']
-            dependencies = @dependencies[uri]
-
-            if !@logical_urls[uri] && dependencies.all? { |d| @logical_urls[d] }
-              # migrate it
-              @logical_urls[uri] = do_create(rewrite(rec, @logical_urls))
-
-              # Now that it's created, we don't need to see the JSON record for
-              # this again either.  This will speed up subsequent cycles.
-              @jstream.delete_current
-
-              progressed = true
-            end
-
-            finished = false unless @logical_urls[uri]
-
-            @ticker.tick
-          end
-        end
-
-        break if finished
-
-        raise "Failed to make any progress on the current import cycle.  This shouldn't happen!" unless progressed
+      # Create all non-global record types without relationships (which will be
+      #   reattached after all records are created)
+      with_status('Creating non-global records without relationships') do
+        create_records_without_relationships(@nonglobal_rec_models)
       end
     ensure
       with_status('Cleaning up') do
@@ -167,9 +135,10 @@ class StreamingImport
 
     @jstream.each do |rec|
       # Add this record's references as dependencies
-      extract_logical_urls(rec, @logical_urls).each do |dependency|
-        dependencies.add_dependency(rec['uri'], dependency) unless dependency == rec['uri']
-      end
+      extract_logical_urls(rec, @logical_urls)
+        .each do |dependency|
+          dependencies.add_dependency(rec['uri'], dependency) unless dependency == rec['uri']
+        end
 
       check_for_invalid_external_references(rec, @logical_urls)
 
@@ -181,14 +150,12 @@ class StreamingImport
         position_maps[set_key] ||= []
         position_maps[set_key][pos] ||= []
         position_maps[set_key][pos] << rec['uri']
-
       end
 
       @ticker.tick
     end
 
     position_maps.each do |_set_key, positions|
-      offset = 0
       positions.flatten!
       positions.compact!
       until positions.empty?
@@ -200,6 +167,12 @@ class StreamingImport
     end
 
     [dependencies, position_offsets]
+  end
+
+  def distinct_jsonmodel_types_in_import
+    models = {}
+    @jstream.each { |rec| models[rec['jsonmodel_type']] = nil }
+    models.keys
   end
 
   def to_jsonmodel(record, validate = true)
@@ -218,8 +191,6 @@ class StreamingImport
           else
             model_for(record['jsonmodel_type']).create_from_json(json, migration: @migration)
           end
-
-    @ticker.log("Created: #{record['uri']}")
 
     obj.uri
   rescue StandardError
@@ -258,6 +229,7 @@ class StreamingImport
   def create_records_without_relationships(jsonmodel_types)
     @jstream.each do |rec|
       uri = rec['uri']
+
       # next unless record_uris.include?(uri) # this is de-optimization but working, shrug
       next if jsonmodel_types.any? && !jsonmodel_types.include?(rec['jsonmodel_type'])
 
@@ -363,7 +335,7 @@ class StreamingImport
   # A ref is any string that appears in our working set of logical_urls
   def extract_logical_urls(record, logical_urls)
     if record.respond_to?(:to_array)
-      record.map { |e| extract_logical_urls(e, logical_urls) }.flatten(1)
+      record.map { |e| extract_logical_urls(e, logical_urls) }.flatten(1).uniq
     elsif record.respond_to?(:each)
       refs = []
 
@@ -371,7 +343,7 @@ class StreamingImport
         refs += extract_logical_urls(v, logical_urls) if k != '_resolved'
       end
 
-      refs
+      refs.uniq
     elsif logical_urls.include?(record)
       [record]
     else
