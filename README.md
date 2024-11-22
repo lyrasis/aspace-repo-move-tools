@@ -52,6 +52,23 @@ The json output will be saved to the `export` folder as
 _Note: test.archivesspace.org is deployed from the ASpace `master` branch
 and therefore should only be used with an ASpace src destination for import._
 
+### Export multiple repositories from the same ArchivesSpace instance
+
+One call of the `export_multi.rb` script and a config file can be used to batch all four of the exports in the previous code block. This script can be useful for testing or for projects involving multiple repositories.
+
+First you need to create a config file containing the `id` and `repo_code` values of the repositories you wish to export. Use to format in the example file: `./support/multi_repo_config_sample.txt`.
+
+Then:
+
+```bash
+cd support
+ruby export_multi.rb https://test.archivesspace.org/staff/api admin admin multi_repo_config_sample.txt
+```
+
+A log file will be written to `support/export.log`.
+
+Note: `export_multi.rb` calls the `./export.sh` script (which itself calls `lib/exporter.rb`). `./export.sh` is not returning the expected non-zero status code if `lib/exporter.rb` fails, so `support/export_multi.rb` shows failure messages, but then reports successful export.
+
 ## Import usage
 
 ```bash
@@ -104,6 +121,28 @@ _Note: the import file is expected to be in the `exports` folder. There is no
 intrinsic relationship between the repository ids for source and destination._
 
 Records should have been created in the local repository.
+
+### Import multiple repositories into the same ArchivesSpace instance
+
+One call of the `import_multi.rb` script and a config file can be used to batch run multiple imports. This script can be useful for testing or for projects involving multiple repositories.
+
+First you need to create a config file containing the `id` and `repo_code` values of the repositories you wish to import. Use to format in the example file: `./support/multi_repo_config_sample.txt`. If you have used `export_multi.rb` to export multiple repositories for import elsewhere, you can use the same config file without changing it.
+
+NOTES:
+
+- Assumes you have not changed the names of exported .json files (Expects the `exported_{id}.json` form, where the id in the export file name matches the id in the config file)
+- Creates the necessary repos in the target ArchivesSpace instance. Both the `repo_code` and `name` values of each created repository will be set to the code value in the config file.
+
+Then:
+
+```bash
+cd support
+ruby import_multi.rb http://localhost:4567 admin admin multi_repo_config_sample.txt
+```
+
+A log file will be written to `support/import.log`.
+
+Note: `import_multi.rb` calls the `./import.sh` script (which itself calls `lib/importer.rb`). `./import.sh` is not returning the expected non-zero status code if `lib/importer.rb` fails, so `support/import_multi.rb` shows failure messages, but then reports successful import.
 
 ## All-in-one tester
 
