@@ -1,12 +1,32 @@
-# repository-importer
+# aspace-repo-move-tools
 
-Script to get all archival records for a repository and build an importable JSON file.
+Tools that allow you to:
+
+- Export a JSON file of almost all[^1] records from a repository in one ArchivesSpace instance
+- Import that JSON file into another ArchivesSpace instance
+
+Currently, this works great when the target instance does not contain any other repositories.
+
+Further work is planned to improve the functionality for moving repositories from disparate ArchivesSpace instances into one instance.
+
+- [Version](#version)
+- [Setup](#setup)
+  * [Reset](#reset)
+- [Export usage](#export-usage)
+  * [Testing export](#testing-export)
+  * [Export multiple repositories from the same ArchivesSpace instance](#export-multiple-repositories-from-the-same-archivesspace-instance)
+- [Import usage](#import-usage)
+  * [Testing import](#testing-import)
+  * [Import multiple repositories into the same ArchivesSpace instance](#import-multiple-repositories-into-the-same-archivesspace-instance)
+- [All-in-one tester](#all-in-one-tester)
+- [Dev](#dev)
+- [Code history / credit](#code-history--credit)
 
 ## Version
 
 It is recommended that source and target instances of ArchivesSpace use the same version.
 
-Currently tested version: `v3.2.0`.
+Currently tested version: `v3.5.1`.
 
 ## Setup
 
@@ -173,3 +193,9 @@ bundle exec rubocop lib/*.rb
 # with autocorrect
 bundle exec rubocop -a lib/*.rb
 ```
+
+## Code history / credit
+
+This code started off as a fork of [hudmol/repository-importer](https://github.com/hudmol/repository-importer), which was developed by [Hudson Molonglo Pty Ltd](https://hudsonmolonglo.com/).
+
+[^1]: Currently some Event records are not moved as expected.
