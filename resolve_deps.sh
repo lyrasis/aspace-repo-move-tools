@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ASPACE_VERSION=${2:-3.2.0}
+ASPACE_VERSION=${2:-4.1.1}
 ASPACE_BASE_URL="https://github.com/archivesspace/archivesspace"
 ASPACE_RELEASE_URL="$ASPACE_BASE_URL/releases/download/v$ASPACE_VERSION/archivesspace-v$ASPACE_VERSION.zip"
 
