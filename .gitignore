@@ -6,3 +6,4 @@ lib/*.jar
 /*.json
 .idea
 *.zip
+/support/*.log
