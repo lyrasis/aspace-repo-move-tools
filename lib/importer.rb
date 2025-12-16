@@ -30,9 +30,10 @@ JSONModel.init(client_mode: true,
                enum_source: PermissiveValidator.new)
 
 def self.login!(username, password)
-  uri = JSONModel(:user).uri_for("#{username}/login?expiring=false")
-
-  response = JSONModel::HTTP.post_form(uri, 'password' => password)
+  user_uri = JSONModel(:user).uri_for(username)
+  login_uri = "#{user_uri}/login"
+  params = {"password" => "admin", "expiring" => false}
+  response = JSONModel::HTTP.post_form(login_uri, **params)
 
   if response.code == '200'
     Thread.current[:backend_session] = JSON.parse(response.body)['session']
