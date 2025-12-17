@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-# This is in archivesspace/common/jsonmodel.rb
-require 'jsonmodel'
+require_relative 'repo/jsonmodelable'
 require 'tempfile'
 
 def show_usage
@@ -17,30 +16,13 @@ import_file = ARGV.fetch(4) { show_usage }
 BASE_DIR = File.expand_path(File.join(File.dirname(__FILE__)))
 import_file = File.join(BASE_DIR, '..', 'exports', import_file)
 
-include JSONModel
+include Repo::Jsonmodelable
 
-class PermissiveValidator
-  def method_missing(*)
-    true
-  end
-end
-
-JSONModel.init(client_mode: true,
-               url: BACKEND_URL,
-               enum_source: PermissiveValidator.new)
-
-def self.login!(username, password)
-  user_uri = JSONModel(:user).uri_for(username)
-  login_uri = "#{user_uri}/login"
-  params = {"password" => "admin", "expiring" => false}
-  response = JSONModel::HTTP.post_form(login_uri, **params)
-
-  if response.code == '200'
-    Thread.current[:backend_session] = JSON.parse(response.body)['session']
-  else
-    raise "ArchivesSpace Login failed: #{response.body}"
-  end
-end
+init_jsonmodel(
+  backend_url: BACKEND_URL,
+  user: USER,
+  password: PASSWORD
+  )
 
 def batch_import(file)
   # Do not set `migration=true`. Do not use `migration=false`, as that will set
@@ -88,7 +70,6 @@ url_map_path = File.join(
 )
 
 begin
-  login!(USER, PASSWORD)
   import_result = batch_import(tmp_file.path)
   return if import_result.empty?
 

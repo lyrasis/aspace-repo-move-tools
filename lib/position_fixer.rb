@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-# This is in archivesspace/common/jsonmodel.rb
-require 'jsonmodel'
+require_relative 'repo/jsonmodelable'
 
 def show_usage
   raise "Usage: #{$PROGRAM_NAME} <backend URL> <repo id> <username> <password> <import file>"
@@ -21,29 +20,13 @@ url_map_path = File.join(
 )
 exit unless File.exist?(url_map_path)
 
-include JSONModel
+include Repo::Jsonmodelable
 
-class PermissiveValidator
-  def method_missing(*)
-    true
-  end
-end
-
-JSONModel.init(client_mode: true,
-               url: BACKEND_URL,
-               enum_source: PermissiveValidator.new)
-
-def self.login!(username, password)
-  uri = JSONModel(:user).uri_for("#{username}/login?expiring=false")
-
-  response = JSONModel::HTTP.post_form(uri, 'password' => password)
-
-  if response.code == '200'
-    Thread.current[:backend_session] = JSON.parse(response.body)['session']
-  else
-    raise "ArchivesSpace Login failed: #{response.body}"
-  end
-end
+init_jsonmodel(
+  backend_url: BACKEND_URL,
+  user: USER,
+  password: PASSWORD
+  )
 
 def prepare_url_map(url_map_path)
   JSON.parse(File.read(url_map_path))['saved']
@@ -145,7 +128,6 @@ tmp_file = Tempfile.new('foo')
 File.open(tmp_file, 'w') { |file| file << file_contents }
 
 begin
-  login!(USER, PASSWORD)
   JSON.parse(File.read(tmp_file.path))
       .select { |rec| rec.key?('position') }
       .group_by { |rec| rec['ancestors'].first['ref'] }
