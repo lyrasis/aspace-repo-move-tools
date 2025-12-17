@@ -1,0 +1,17 @@
+#! /usr/bin/env jruby
+# frozen_string_literal: true
+
+`export JAVA_OPTS="-Dfile.encoding=UTF-8 -Xmx4g"` # -verbose:gc
+
+require "bundler/setup"
+Bundler.require(:tools)
+
+require "pry"
+classpath = File.join(Bundler.root, "lib", "common.jar")
+load classpath
+
+require_relative "../lib/repo/jsonmodelable"
+Pry.start
+
+# require "irb"
+# IRB.start(__FILE__)
