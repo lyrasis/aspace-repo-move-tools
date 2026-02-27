@@ -26,7 +26,7 @@ Further work is planned to improve the functionality for moving repositories fro
 
 It is recommended that source and target instances of ArchivesSpace use the same version.
 
-Currently tested version: `v4.1.1`.
+Currently supported version can be found in the `.aspace-version` file.
 
 ## Setup
 
