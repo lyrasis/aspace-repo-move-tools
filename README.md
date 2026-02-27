@@ -28,14 +28,22 @@ It is recommended that source and target instances of ArchivesSpace use the same
 
 Currently supported version can be found in the `.aspace-version` file.
 
-## Setup
+## Initial setup
 
 Install [Java](#) & [Rbenv](#).
 
-Then pull all of the project dependencies:
+Ensure you have the required ruby version. This checks the `.ruby-version` file in this repo and installs that version if you don't already have it:
 
 ```bash
-./resolve_deps.sh
+rbenv install -s
+```
+
+Get required Ruby dependencies:
+
+```bash
+bundle install
+```
+
 ```
 
 In order for this to work, you need to use a monkey-patched version of the `streaming_import.rb` that changes the order in which things get created. Replace the `backend/app/lib/streaming_import.rb` file in your ArchivesSpace instance with the same-named file in this repository's `/support` directory.
