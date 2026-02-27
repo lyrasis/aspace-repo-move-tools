@@ -9,3 +9,4 @@ gem 'multipart-post', '~> 2.4' # pinned to version used in AS
 gem 'net-http-persistent', '>= 4.0.1'  # pinned to version used in AS
 gem 'rubocop'
 gem 'pry'
+gem 'thor'
