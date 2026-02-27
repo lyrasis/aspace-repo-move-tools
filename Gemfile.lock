@@ -58,10 +58,12 @@ GEM
     ruby-progressbar (1.11.0)
     spoon (0.0.6)
       ffi
+    thor (1.5.0)
     unicode-display_width (2.1.0)
 
 PLATFORMS
   universal-java-11
+  universal-java-17
 
 DEPENDENCIES
   addressable (= 2.8.7)
@@ -73,6 +75,7 @@ DEPENDENCIES
   net-http-persistent (>= 4.0.1)
   pry
   rubocop
+  thor
 
 BUNDLED WITH
    2.3.8
