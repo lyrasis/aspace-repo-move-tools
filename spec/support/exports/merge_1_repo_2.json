@@ -1,0 +1,302 @@
+[
+    {
+        "lock_version": 1,
+        "indicator": "1234",
+        "created_by": "admin",
+        "last_modified_by": "admin",
+        "create_time": "2026-02-16T18:50:53Z",
+        "system_mtime": "2026-02-16T18:52:50Z",
+        "user_mtime": "2026-02-16T18:50:53Z",
+        "jsonmodel_type": "top_container",
+        "active_restrictions": [],
+        "container_locations": [],
+        "series": [],
+        "collection": [
+            {
+                "ref": "/repositories/REPO_ID_GOES_HERE/resources/1",
+                "identifier": "23456",
+                "display_string": "resource"
+            }
+        ],
+        "uri": "/repositories/REPO_ID_GOES_HERE/top_containers/1",
+        "repository": {"ref": "/repositories/REPO_ID_GOES_HERE"},
+        "container_profile": {"ref": "/container_profiles/1"},
+        "restricted": false,
+        "is_linked_to_published_record": false,
+        "display_string": " 1234",
+        "long_display_string": " 1234, Hollinger, 23456, resource"
+    },
+    {
+        "lock_version": 1,
+        "indicator": "2345",
+        "created_by": "admin",
+        "last_modified_by": "admin",
+        "create_time": "2026-02-16T18:52:11Z",
+        "system_mtime": "2026-02-16T18:52:50Z",
+        "user_mtime": "2026-02-16T18:52:11Z",
+        "jsonmodel_type": "top_container",
+        "active_restrictions": [],
+        "container_locations": [],
+        "series": [],
+        "collection": [
+            {
+                "ref": "/repositories/REPO_ID_GOES_HERE/resources/1",
+                "identifier": "23456",
+                "display_string": "resource"
+            }
+        ],
+        "uri": "/repositories/REPO_ID_GOES_HERE/top_containers/2",
+        "repository": {"ref": "/repositories/REPO_ID_GOES_HERE"},
+        "container_profile": {"ref": "/container_profiles/2"},
+        "restricted": false,
+        "is_linked_to_published_record": false,
+        "display_string": " 2345",
+        "long_display_string": " 2345, Bankers, 23456, resource"
+    },
+    {
+        "lock_version": 0,
+        "title": "resource from merged repo",
+        "publish": false,
+        "restrictions": false,
+        "created_by": "admin",
+        "last_modified_by": "admin",
+        "create_time": "2026-02-16T15:43:23Z",
+        "system_mtime": "2026-02-16T18:52:50Z",
+        "user_mtime": "2026-02-16T15:43:23Z",
+        "suppressed": false,
+        "is_slug_auto": false,
+        "is_finding_aid_status_published": true,
+        "id_0": "23456",
+        "level": "collection",
+        "finding_aid_language": "dar",
+        "finding_aid_script": "Roro",
+        "jsonmodel_type": "resource",
+        "external_ids": [],
+        "subjects": [],
+        "linked_events": [],
+        "extents": [
+            {
+                "lock_version": 0,
+                "number": "2",
+                "created_by": "admin",
+                "last_modified_by": "admin",
+                "create_time": "2026-02-16T15:43:23Z",
+                "system_mtime": "2026-02-16T15:43:23Z",
+                "user_mtime": "2026-02-16T15:43:23Z",
+                "portion": "whole",
+                "extent_type": "cubic_feet",
+                "jsonmodel_type": "extent"
+            }
+        ],
+        "lang_materials": [
+            {
+                "lock_version": 0,
+                "created_by": "admin",
+                "last_modified_by": "admin",
+                "create_time": "2026-02-16T15:43:23Z",
+                "system_mtime": "2026-02-16T15:43:23Z",
+                "user_mtime": "2026-02-16T15:43:23Z",
+                "jsonmodel_type": "lang_material",
+                "notes": [],
+                "language_and_script": {
+                    "lock_version": 0,
+                    "created_by": "admin",
+                    "last_modified_by": "admin",
+                    "create_time": "2026-02-16T15:43:23Z",
+                    "system_mtime": "2026-02-16T15:43:23Z",
+                    "user_mtime": "2026-02-16T15:43:23Z",
+                    "language": "jpn",
+                    "jsonmodel_type": "language_and_script"
+                }
+            }
+        ],
+        "dates": [
+            {
+                "lock_version": 0,
+                "expression": "undated",
+                "created_by": "admin",
+                "last_modified_by": "admin",
+                "create_time": "2026-02-16T15:43:23Z",
+                "system_mtime": "2026-02-16T15:43:23Z",
+                "user_mtime": "2026-02-16T15:43:23Z",
+                "date_type": "inclusive",
+                "label": "creation",
+                "jsonmodel_type": "date"
+            }
+        ],
+        "external_documents": [],
+        "rights_statements": [],
+        "linked_agents": [],
+        "import_previous_arks": [],
+        "revision_statements": [],
+        "instances": [],
+        "deaccessions": [],
+        "related_accessions": [],
+        "classifications": [],
+        "notes": [],
+        "metadata_rights_declarations": [],
+        "uri": "/repositories/REPO_ID_GOES_HERE/resources/1",
+        "repository": {"ref": "/repositories/REPO_ID_GOES_HERE"},
+        "tree": {"ref": "/repositories/REPO_ID_GOES_HERE/resources/1/tree"}
+    },
+    {
+        "lock_version": 1,
+        "position": 0,
+        "publish": false,
+        "ref_id": "f34ae6fea866724dbe59803609801d5a",
+        "title": "ao from merged repo",
+        "display_string": "ao",
+        "restrictions_apply": false,
+        "created_by": "admin",
+        "last_modified_by": "admin",
+        "create_time": "2026-02-16T18:49:53Z",
+        "system_mtime": "2026-02-16T18:52:50Z",
+        "user_mtime": "2026-02-16T18:52:50Z",
+        "suppressed": false,
+        "is_slug_auto": false,
+        "level": "series",
+        "jsonmodel_type": "archival_object",
+        "external_ids": [],
+        "subjects": [],
+        "linked_events": [],
+        "extents": [],
+        "lang_materials": [],
+        "dates": [],
+        "external_documents": [],
+        "rights_statements": [],
+        "linked_agents": [],
+        "import_previous_arks": [],
+        "ancestors": [
+            {
+                "ref": "/repositories/REPO_ID_GOES_HERE/resources/1",
+                "level": "collection"
+            }
+        ],
+        "instances": [
+            {
+                "lock_version": 0,
+                "created_by": "admin",
+                "last_modified_by": "admin",
+                "create_time": "2026-02-16T18:52:50Z",
+                "system_mtime": "2026-02-16T18:52:50Z",
+                "user_mtime": "2026-02-16T18:52:50Z",
+                "instance_type": "mixed_materials",
+                "jsonmodel_type": "instance",
+                "is_representative": false,
+                "sub_container": {
+                    "lock_version": 0,
+                    "created_by": "admin",
+                    "last_modified_by": "admin",
+                    "create_time": "2026-02-16T18:52:50Z",
+                    "system_mtime": "2026-02-16T18:52:50Z",
+                    "user_mtime": "2026-02-16T18:52:50Z",
+                    "jsonmodel_type": "sub_container",
+                    "top_container": {"ref": "/repositories/REPO_ID_GOES_HERE/top_containers/1"}
+                }
+            }
+        ],
+        "notes": [],
+        "accession_links": [],
+        "uri": "/repositories/REPO_ID_GOES_HERE/archival_objects/1",
+        "repository": {"ref": "/repositories/REPO_ID_GOES_HERE"},
+        "resource": {"ref": "/repositories/REPO_ID_GOES_HERE/resources/1"},
+        "has_unpublished_ancestor": true
+    },
+    {
+        "lock_version": 1,
+        "position": 1,
+        "publish": false,
+        "ref_id": "536f17f0d10f3975efd4e6177d583847",
+        "title": "ao2 from merged repo",
+        "display_string": "ao2",
+        "restrictions_apply": false,
+        "created_by": "admin",
+        "last_modified_by": "admin",
+        "create_time": "2026-02-16T18:51:27Z",
+        "system_mtime": "2026-02-16T18:52:14Z",
+        "user_mtime": "2026-02-16T18:52:14Z",
+        "suppressed": false,
+        "is_slug_auto": false,
+        "level": "series",
+        "jsonmodel_type": "archival_object",
+        "external_ids": [],
+        "subjects": [],
+        "linked_events": [],
+        "extents": [],
+        "lang_materials": [],
+        "dates": [],
+        "external_documents": [],
+        "rights_statements": [],
+        "linked_agents": [],
+        "import_previous_arks": [],
+        "ancestors": [
+            {
+                "ref": "/repositories/REPO_ID_GOES_HERE/resources/1",
+                "level": "collection"
+            }
+        ],
+        "instances": [
+            {
+                "lock_version": 0,
+                "created_by": "admin",
+                "last_modified_by": "admin",
+                "create_time": "2026-02-16T18:52:14Z",
+                "system_mtime": "2026-02-16T18:52:14Z",
+                "user_mtime": "2026-02-16T18:52:14Z",
+                "instance_type": "mixed_materials",
+                "jsonmodel_type": "instance",
+                "is_representative": false,
+                "sub_container": {
+                    "lock_version": 0,
+                    "created_by": "admin",
+                    "last_modified_by": "admin",
+                    "create_time": "2026-02-16T18:52:14Z",
+                    "system_mtime": "2026-02-16T18:52:14Z",
+                    "user_mtime": "2026-02-16T18:52:14Z",
+                    "jsonmodel_type": "sub_container",
+                    "top_container": {"ref": "/repositories/REPO_ID_GOES_HERE/top_containers/2"}
+                }
+            }
+        ],
+        "notes": [],
+        "accession_links": [],
+        "uri": "/repositories/REPO_ID_GOES_HERE/archival_objects/2",
+        "repository": {"ref": "/repositories/REPO_ID_GOES_HERE"},
+        "resource": {"ref": "/repositories/REPO_ID_GOES_HERE/resources/1"},
+        "has_unpublished_ancestor": true
+    },
+    {
+        "lock_version": 1,
+        "name": "Hollinger",
+        "extent_dimension": "height",
+        "height": "0",
+        "width": "0",
+        "depth": "0",
+        "created_by": "admin",
+        "last_modified_by": "admin",
+        "create_time": "2026-02-16T15:43:55Z",
+        "system_mtime": "2026-02-16T18:50:53Z",
+        "user_mtime": "2026-02-16T15:43:55Z",
+        "dimension_units": "inches",
+        "jsonmodel_type": "container_profile",
+        "uri": "/container_profiles/1",
+        "display_string": "Hollinger [0d, 0h, 0w inches] extent measured by height"
+    },
+    {
+        "lock_version": 1,
+        "name": "Bankers",
+        "extent_dimension": "height",
+        "height": "1",
+        "width": "1",
+        "depth": "1",
+        "created_by": "admin",
+        "last_modified_by": "admin",
+        "create_time": "2026-02-16T18:49:13Z",
+        "system_mtime": "2026-02-16T18:52:11Z",
+        "user_mtime": "2026-02-16T18:49:13Z",
+        "dimension_units": "inches",
+        "jsonmodel_type": "container_profile",
+        "uri": "/container_profiles/2",
+        "display_string": "Bankers [1d, 1h, 1w inches] extent measured by height"
+    }
+]
