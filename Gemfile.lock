@@ -62,6 +62,7 @@ GEM
 
 PLATFORMS
   universal-java-11
+  universal-java-17
 
 DEPENDENCIES
   addressable (= 2.8.7)
