@@ -9,7 +9,7 @@ if ! [ -f ./archivesspace-v$ASPACE_VERSION.zip ]; then
 fi
 
 unzip -n ./archivesspace-v$ASPACE_VERSION.zip
-cp ./archivesspace/lib/common.jar ./lib/
+cp ./archivesspace/lib/common.jar ./vendor/
 
 rbenv install -s
 bundle install
