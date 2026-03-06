@@ -7,6 +7,10 @@ module RepoMove
 
   def as_version = File.read(File.join(Bundler.root, ".aspace-version"))
 
+  ENV["CLASSPATH"] = File.join("vendor", "common-#{as_version}.jar")
+  ENV["JAVA_OPTS"] = "-Dfile.encoding=UTF-8 -Xmx4g" # -verbose:gc
+  load ENV["CLASSPATH"]
+
   Dir.glob(File.join(Bundler.root, "lib", "repo_move", "**", "*"))
     .sort
     .each do |path|
