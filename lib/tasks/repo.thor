@@ -22,4 +22,15 @@ class Repo < Thor
   def create
     RepoMove::Repo::Creator.new(options).call
   end
+
+  desc "list", "List existing repos in ArchivesSpace instance"
+  method_option :mode,
+    required: true,
+    type: :string,
+    enum: %w[source target],
+    desc: "which ArchivesSpace to list for",
+    aliases: "-m"
+  def list
+    RepoMove::Repo::Lister.new(options[:mode].to_sym).call
+  end
 end
