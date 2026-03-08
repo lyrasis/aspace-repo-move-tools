@@ -2,8 +2,6 @@ archivesspace/
 exports/*.json
 lib/gems/
 lib/deps/
-lib/*.jar
-/*.json
-.idea
+vendor/*.jar
 *.zip
 /support/*.log
