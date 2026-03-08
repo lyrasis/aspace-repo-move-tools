@@ -1,4 +1,2 @@
-inherit_from: []
-
-AllCops:
-  NewCops: enable
+inherit_gem:
+  almost_standard: .rubocop.yml
