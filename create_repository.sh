@@ -1,7 +1,0 @@
-#!/bin/bash
-
-cd "`dirname "$0"`"
-
-export CLASSPATH="vendor/common.jar"
-export JAVA_OPTS="-Dfile.encoding=UTF-8 -Xmx2g"
-bundle exec ruby ./scripts_rb/create_repository.rb ${1+"$@"}
