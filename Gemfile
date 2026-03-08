@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+gem "table_tennis"
 
 gem 'addressable', '= 2.8.7' # pinned to version used in AS
 gem 'archivesspace-client'
