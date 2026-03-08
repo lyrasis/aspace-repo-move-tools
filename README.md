@@ -50,6 +50,8 @@ Then pull the common.jar file from the target version of ArchivesSpace into the 
 thor setup common
 ```
 
+Copy `./sample_config.json` to `~/.config/aspace-repo-move-tools/config.json` and customize your config settings.
+
 In order for this to work, you need to use a monkey-patched version of the `streaming_import.rb` that changes the order in which things get created. Replace the `backend/app/lib/streaming_import.rb` file in your ArchivesSpace instance with the same-named file in this repository's `/support` directory.
 
 ### Reset

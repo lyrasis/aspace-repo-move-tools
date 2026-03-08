@@ -3,6 +3,5 @@ exports/*.json
 lib/gems/
 lib/deps/
 vendor/*.jar
-/*.json
 *.zip
 /support/*.log

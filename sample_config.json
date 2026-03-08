@@ -1,0 +1,36 @@
+{
+  // SOURCE is the ArchivesSpace instance that you will EXPORT from,
+  // and perhaps pull information from. Source is never modified by this
+  // tool.
+  //
+  // TARGET is the ArchivesSpace instance that you will IMPORT into. Please
+  // do not use anything other than a local copy of an ArchivesSpace
+  // instance as target.
+  //
+  // The default assumption is that you will be switching back and forth
+  // between your source and target ArchivesSpace instances in your
+  // dev environment, and thus their base_uri and credentials are the
+  // same. However, you CAN set them separately.
+  //
+  // CAUTION: It is safe to use an active, real ArchivesSpace as
+  // source, since no changes are ever made to source. We HIGHLY
+  // DISCOURAGE using anything but a local dev instance as target.
+  "source_base_uri": "http://localhost:4567",
+  // // Deployed from ArchivesSpace `master` branch, so your target should
+  // // also be synced with `master`
+  // "source_base_uri": "https://test.archivesspace.org/staff/api",
+  "source_username": "admin",
+  "source_password": "admin",
+  "source_base_repo": "",
+  "target_base_uri": "http://localhost:4567",
+  "target_username": "admin",
+  "target_password": "admin",
+  "target_base_repo": "",
+  // asclient is https://github.com/lyrasis/archivesspace-client
+  // These settings are specific to that tool
+  "asclient_page_size": 50,
+  "asclient_throttle": 0,
+  "asclient_timeout": 60,
+  "asclient_verify_ssl": false,
+  "asclient_debug": false
+}
