@@ -115,7 +115,7 @@ PLATFORMS
 DEPENDENCIES
   addressable (= 2.8.7)
   almost_standard!
-  archivesspace-client
+  archivesspace-client (= 0.1.11)
   atomic (= 1.0.1)
   i18n (~> 1.0)
   json-schema (= 1.0.10)
