@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-# This is in archivesspace/common/jsonmodel.rb
-require 'jsonmodel'
-require 'tempfile'
+require_relative "json_modelable"
+require "tempfile"
 
 module RepoMove
   module Repo
     class Importer
-      include JSONModel
+      include JsonModelable
 
       # @param options [Hash]
       # @option options [Numeric] :repo_id of repo to import into
@@ -24,11 +23,8 @@ module RepoMove
         @user = config.target_username
         @password = config.target_password
         @repo_uri = "/repositories/#{id}"
-
-        JSONModel.init(client_mode: true,
-                       url: backend_url,
-                       enum_source: PermissiveValidator.new)
         @results = []
+        init_json_model
       end
 
       def call
@@ -43,7 +39,7 @@ module RepoMove
         batch_import(tmp_file.path)
         return if results.empty?
 
-        write_url_mappings(url_map_path)
+        handle_url_mappings
       ensure
         tmp_file&.unlink
       end
@@ -91,7 +87,7 @@ module RepoMove
         @results = results.join.sub(/\n\n\]$/, '')
       end
 
-      def write_url_mappings(path)
+      def handle_url_mappings
         parsed = JSON.parse(results)
 
         if parsed.key?('errors')
