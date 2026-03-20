@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "logger"
 require "set"
 
 module RepoMove
@@ -35,6 +36,8 @@ module RepoMove
         @exported_uris = Set.new
         @linked_uris = Set.new
         @unparented_records = Set.new
+        @log = Logger.new("#{path}.log")
+        @warning_ct = 0
       end
 
       def call
@@ -55,12 +58,17 @@ module RepoMove
             .to_json
             .gsub(repo_uri, REPO_PLACEHOLDER)
         end
+
+        unless warning_ct == 0
+          puts "#{warning_ct} warning(s)! Check #{path}.log for details"
+        end
       end
 
       private
 
       attr_reader :id, :path, :client, :repo_uri, :repo_published,
-        :exported_records, :exported_uris, :linked_uris, :unparented_records
+        :exported_records, :exported_uris, :linked_uris, :unparented_records,
+        :log, :warning_ct
 
       def export_rectype(rectype)
         puts "Exporting #{rectype}..."
@@ -161,15 +169,32 @@ module RepoMove
         # Related Resources under accessions will create the link
         rec["related_accessions"] = [] if rec.key?("related_accessions")
 
-        # if record.key?('lang_materials') && record['jsonmodel_type'] == 'digital_object'
-        #   record['lang_materials'].each do |r|
-        #     # Not supported by schema, throws errors (and this is super rare data)
-        #     r['notes'].delete_if { |n| n['jsonmodel_type'] == 'note_digital_object' } if r.key?('notes')
-        #   end
-        # end
+        if rec.key?("lang_materials") &&
+            rec["jsonmodel_type"] == "digital_object"
+          rec["lang_materials"].each do |r|
+            # Not supported by schema, throws errors (and this is super rare data)
+            next unless r.key?("notes")
+            next unless r["notes"].any? { |n| n["jsonmodel_type"] == "note_digital_object" }
+
+            flag_dropped_notes(rec)
+            log.warn("Dropped note\n#{rec.to_json}")
+            r["notes"].delete_if { |n| n["jsonmodel_type"] == "note_digital_object" }
+          end
+        end
 
         dedup_related_agents(rec)
         rec
+      end
+
+      def flag_dropped_notes(rec)
+        rec["lang_materials"].each do |lm|
+          lm["notes"].each do |n|
+            next unless n["jsonmodel_type"] == "note_digital_object"
+
+            @warning_ct += 1
+            n["REPO_MOVE_WARNING"] = "This note is dropped from repo_move"
+          end
+        end
       end
 
       def clean_repo_refs(rec)
