@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "json_modelable"
+require_relative "position_fixer"
 require "tempfile"
 
 module RepoMove
