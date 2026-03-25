@@ -1,5 +1,5 @@
 archivesspace/
-exports/*.json
+exports/*
 lib/gems/
 lib/deps/
 vendor/*.jar
