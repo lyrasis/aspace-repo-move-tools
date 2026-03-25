@@ -39,7 +39,7 @@ module RepoMove
     end
 
     def define(key, val)
-      self.class.define_method(key) {val}
+      self.class.define_method(key) { val }
     end
   end
 end

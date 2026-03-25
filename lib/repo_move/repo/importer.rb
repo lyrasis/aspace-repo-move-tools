@@ -17,7 +17,7 @@ module RepoMove
         @json_path = File.expand_path(options[:json_file])
         @url_map_path = File.join(
           File.dirname(json_path),
-          "#{File.basename(json_path, '.*')}_url_map.json"
+          "#{File.basename(json_path, ".*")}_url_map.json"
         )
         config = RepoMove.config
         @backend_url = config.target_base_uri
@@ -31,10 +31,10 @@ module RepoMove
       def call
         login
         file_contents = File.read(json_path)
-        file_contents.gsub!(/REPO_ID_GOES_HERE/, id.to_s)
-        tmp_file = Tempfile.new('foo')
-        File.open(tmp_file, 'w') do |file|
-          file << file_contents.gsub(/REPO_ID_GOES_HERE/, id.to_s)
+        file_contents.gsub!("REPO_ID_GOES_HERE", id.to_s)
+        tmp_file = Tempfile.new("foo")
+        File.open(tmp_file, "w") do |file|
+          file << file_contents.gsub("REPO_ID_GOES_HERE", id.to_s)
         end
 
         batch_import(tmp_file.path)
@@ -85,18 +85,18 @@ module RepoMove
             end
           end
         end
-        @results = results.join.sub(/\n\n\]$/, '')
+        @results = results.join.sub(/\n\n\]$/, "")
       end
 
       def handle_url_mappings
         parsed = JSON.parse(results)
 
-        if parsed.key?('errors')
-          p '-- IMPORT ERROR(S)'
-          parsed['errors'].each { |err| p "   #{err}" }
+        if parsed.key?("errors")
+          p "-- IMPORT ERROR(S)"
+          parsed["errors"].each { |err| p "   #{err}" }
         else
-          File.open(url_map_path, 'w') { |file| file << results }
-          p '-- DONE Importing'
+          File.open(url_map_path, "w") { |file| file << results }
+          p "-- DONE Importing"
           RepoMove::Repo::PositionFixer.new(id, json_path, url_map_path).call
         end
       end

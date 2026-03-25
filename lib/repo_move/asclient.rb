@@ -5,7 +5,7 @@ require "archivesspace/client"
 module RepoMove
   class Asclient
     REQUIRED_FIELDS = %i[base_uri base_repo username password page_size
-                         throttle verify_ssl debug]
+      throttle verify_ssl debug]
     DEFAULTS = {
       page_size: 50,
       throttle: 0,

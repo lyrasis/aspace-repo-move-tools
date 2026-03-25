@@ -118,7 +118,7 @@ module RepoMove
               uris.concat(extract_links(v))
             elsif v.is_a? Hash
               uris.concat(extract_links(v))
-            elsif k == 'ref'
+            elsif k == "ref"
               uris << v
             end
           end
@@ -129,10 +129,10 @@ module RepoMove
 
       # Ensure records with parents aren't processed before the parent
       def unparented_rlshp?(record)
-        parent = record['parent']
+        parent = record["parent"]
         return unless parent
-        return if exported_uris.include?(parent['ref']) &&
-          !unparented_records.find { |r| r['uri'] == parent['ref'] }
+        return if exported_uris.include?(parent["ref"]) &&
+          !unparented_records.find { |r| r["uri"] == parent["ref"] }
 
         unparented_records << record
         true
@@ -161,7 +161,7 @@ module RepoMove
       end
 
       def clean(rec)
-        rec.delete('id')
+        rec.delete("id")
         clean_repo_refs(rec)
 
         # Skip related accessions so the import doesn't duplicate related
@@ -172,13 +172,17 @@ module RepoMove
         if rec.key?("lang_materials") &&
             rec["jsonmodel_type"] == "digital_object"
           rec["lang_materials"].each do |r|
-            # Not supported by schema, throws errors (and this is super rare data)
+            # Not supported by schema, throws errors
             next unless r.key?("notes")
-            next unless r["notes"].any? { |n| n["jsonmodel_type"] == "note_digital_object" }
+            next unless r["notes"].any? do |n|
+              n["jsonmodel_type"] == "note_digital_object"
+            end
 
             flag_dropped_notes(rec)
             log.warn("Dropped note\n#{rec.to_json}")
-            r["notes"].delete_if { |n| n["jsonmodel_type"] == "note_digital_object" }
+            r["notes"].delete_if do |n|
+              n["jsonmodel_type"] == "note_digital_object"
+            end
           end
         end
 
@@ -212,14 +216,14 @@ module RepoMove
         end
       end
 
-      # Remove the related_agent link if the related_agent uri is already in
-      # @exported_uris. This assumes that the related_agent link is already expressed
-      # via the associated agent record
+      # Remove the related_agent link if the related_agent uri is
+      # already in @exported_uris. This assumes that the related_agent
+      # link is already expressed via the associated agent record
       def dedup_related_agents(record)
-        return unless record['related_agents']
+        return unless record["related_agents"]
 
-        record["related_agents"].delete_if do
-          |r| exported_uris.include?(r["ref"])
+        record["related_agents"].delete_if do |r|
+          exported_uris.include?(r["ref"])
         end
       end
     end

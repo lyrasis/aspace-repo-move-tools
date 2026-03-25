@@ -3,7 +3,7 @@
 require_relative "permissive_validator"
 
 # This is in archivesspace/common/jsonmodel.rb
-require 'jsonmodel'
+require "jsonmodel"
 
 module RepoMove
   module Repo
@@ -17,8 +17,8 @@ module RepoMove
         @password = config.target_password
 
         JSONModel.init(client_mode: true,
-                       url: backend_url,
-                       enum_source: PermissiveValidator.new)
+          url: backend_url,
+          enum_source: PermissiveValidator.new)
       end
 
       def backend_url
@@ -39,8 +39,9 @@ module RepoMove
         params = {"password" => password, "expiring" => false}
         response = JSONModel::HTTP.post_form(login_uri, **params)
 
-        if response.code == '200'
-          Thread.current[:backend_session] = JSON.parse(response.body)['session']
+        if response.code == "200"
+          Thread.current[:backend_session] =
+            JSON.parse(response.body)["session"]
         else
           raise "ArchivesSpace Login failed: #{response.body}"
         end

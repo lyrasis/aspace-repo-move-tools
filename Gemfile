@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source "https://rubygems.org"
 
 gem "addressable", "= 2.8.7" # pinned to version used in AS

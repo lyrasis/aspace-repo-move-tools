@@ -12,7 +12,6 @@ class Setup < Thor
     aspace_url = "https://github.com/archivesspace/archivesspace/releases/"\
       "download/#{RepoMove.as_version}/#{aspace_release}"
 
-
     `curl -L -O #{aspace_url}`
 
     `unzip -n #{aspace_release}`
