@@ -21,8 +21,8 @@ module RepoMove
 
       def call
         login
-        ingested_json.select { |rec| rec.key?('position') }
-          .group_by { |rec| rec['ancestors'].first['ref'] }
+        ingested_json.select { |rec| rec.key?("position") }
+          .group_by { |rec| rec["ancestors"].first["ref"] }
           .each { |parent, children| handle_children(parent, children) }
         puts "-- DONE FIXING MISCALCULATED POSITIONS"
       end
@@ -34,12 +34,12 @@ module RepoMove
       def ingested_json
         JSON.parse(
           File.read(json_path)
-            .gsub!(/REPO_ID_GOES_HERE/, id.to_s)
+            .gsub!("REPO_ID_GOES_HERE", id.to_s)
         )
       end
 
       def mappings
-        @mappings ||= JSON.parse(File.read(map_path))['saved']
+        @mappings ||= JSON.parse(File.read(map_path))["saved"]
           .transform_keys!(&:to_s)
           .transform_values!(&:first)
       end
@@ -48,11 +48,11 @@ module RepoMove
         parent = mappings[parent]
         children = children.map do |rec|
           {
-            'uri' => mappings[rec['uri']],
-            'orig_position' => rec['position']
+            "uri" => mappings[rec["uri"]],
+            "orig_position" => rec["position"]
           }
-        end.sort_by { |rec| rec['orig_position'] }
-          .map { |rec| rec['uri'] }
+        end.sort_by { |rec| rec["orig_position"] }
+          .map { |rec| rec["uri"] }
         return if expected_order?(parent, children)
 
         reposition_children(parent, children)
@@ -78,35 +78,35 @@ module RepoMove
 
       def get_child_endpoint_path(parent)
         path = case parent
-               when %r{/archival_objects/}
-                 URI(File.join(parent, 'children'))
-               else # resource, classification, digital object
-                 URI(File.join(parent, 'tree', 'root'))
-               end
+        when %r{/archival_objects/}
+          URI(File.join(parent, "children"))
+        else # resource, classification, digital object
+          URI(File.join(parent, "tree", "root"))
+        end
         URI(path)
       end
 
       def process_response(parent, _path, response)
         case parent
         when %r{/archival_objects/}
-          response.map { |rec| rec['uri'] }
+          response.map { |rec| rec["uri"] }
         else # resource, classification, digital object
           extract_children_from_waypoints(parent, response)
         end
       end
 
       def extract_children_from_waypoints(parent, response)
-        children = response['precomputed_waypoints']['']['0']
-          .map { |rec| rec['uri'] }
-        waypoint_ct = response['waypoints']
+        children = response["precomputed_waypoints"][""]["0"]
+          .map { |rec| rec["uri"] }
+        waypoint_ct = response["waypoints"]
         return children if waypoint_ct == 1
 
         retrieved = 1
-        path = File.join(parent, 'tree', 'waypoint')
+        path = File.join(parent, "tree", "waypoint")
         (waypoint_ct - 1).times do
           children << JSONModel::HTTP.get_json(
-            path, { 'offset' => retrieved, 'published_only' => false }
-          ).map { |rec| rec['uri'] }
+            path, {"offset" => retrieved, "published_only" => false}
+          ).map { |rec| rec["uri"] }
           retrieved += 1
         end
 
@@ -116,12 +116,12 @@ module RepoMove
       def reposition_children(parent, children)
         response = JSONModel::HTTP.post_form(
           "#{parent}/accept_children", {
-            'children[]' => children,
-            'position' => 0
+            "children[]" => children,
+            "position" => 0
           }
         )
 
-        if response.code.start_with?('2')
+        if response.code.start_with?("2")
           puts "-- Repositioned children of #{parent}"
         else
           puts "ERROR repositioning children of #{parent}"

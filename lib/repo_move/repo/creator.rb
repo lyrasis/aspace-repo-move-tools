@@ -34,7 +34,7 @@ module RepoMove
       end
 
       def ingest(record)
-        response = client.post('/repositories/with_agent', record)
+        response = client.post("/repositories/with_agent", record)
         if response.result.success?
           puts "Successfully created repository: #{repo_code}"
         else

@@ -5,7 +5,9 @@
 #
 # This is not janky at all, I promise.
 class PermissiveValidator
+  # rubocop:disable Style/MissingRespondToMissing
   def method_missing(*)
     true
   end
+  # rubocop:enable Style/MissingRespondToMissing
 end

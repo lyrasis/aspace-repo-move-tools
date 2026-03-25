@@ -24,9 +24,9 @@ module RepoMove
       attr_reader :client
 
       def results
-         client.all("repositories").map do |repo|
+        client.all("repositories").map do |repo|
           {uri: repo["uri"], repo_code: repo["repo_code"], name: repo["name"]}
-         end
+        end
       rescue ArchivesSpace::RequestError => e
         e.message
       end
