@@ -1,0 +1,188 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+:imagesdir: https://raw.githubusercontent.com/lyrasis/aspace-repo-move-tools/main/images
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= ArchivesSpace Repository Move Tools
+
+Export a repository from one ArchivesSpace instance.
+Import it into another ArchivesSpace instance.
+
+toc::[]
+
+== Warnings/caveats
+
+Original use case of this tool was:
+
+* Export a repo from one ArchivesSpace instance
+* Import it into a new, empty ArchivesSpace instance
+
+[CAUTION]
+====
+Expect trouble if you are moving a repo into a non-empty ArchivesSpace.
+
+Expect *even more* trouble if you are moving multiple repos from one ArchivesSpace into another ArchivesSpace.
+====
+
+[WARNING]
+====
+There are known and potential issues with this tool related to:
+
+* Mismatch between original use case and the uses to which it is now being applied
+* Odd data that may be hiding out in the exported records, but will not validate on import
+
+See:
+
+* https://github.com/lyrasis/aspace-repo-move-tools/issues?q=is%3Aissue%20state%3Aopen%20no%3Aparent-issue%20label%3A%22known%20issue%22[Known issues, unresolved]
+* https://github.com/lyrasis/aspace-repo-move-tools/issues?q=is%3Aissue%20state%3Aopen%20no%3Aparent-issue%20label%3A%22potential%20issue%20testing%22[Potential/suspected issues still untested]
+
+Also:
+
+* All imported records will have a created/updated date of when they were imported.
+The created/updated by user will be the user who performed the import.
+* The URIs of imported records will change.
+If you have external systems or documents referring to records in repos that will be moved, have a plan for that.
+====
+
+== Requirements for use of this tool
+
+* API access to the ArchivesSpace instance (source) from which repo will be exported and the ArchivesSpace instance into which the repo data will be imported (target)
+* *Target ArchivesSpace only*: Ability to replace the existing `backend/app/lib/streaming_import.rb` file with this repo's `/support/streaming_import.rb` file for the duration of the import process.
+In practice, this means you will need to run ArchivesSpace on your machine, with the real target ArchivesSpace database loaded.
+After import is complete, you can export the database to load back into the actual target ArchivesSpace instance.
+* Source and target ArchivesSpace instances should be the same ArchivesSpace version.
+Trying to import data into a different version of ArchivesSpace may result in validation errors that this tool will not handle.
+* An operating system currently supported for ArchivesSpace development, as listed in the https://docs.archivesspace.org/development/dev/#_top[ArchivesSpace Tech Docs > Development environment overview].
+You _may_ be able to use this tool on other systems, but the setup and commands to achieve it will be different.
+* Java.
+If you will be running the target ArchivesSpace in a development environment, setting that up environment includes installing Java.
+If you will be running the target ArchivesSpace in Docker, you may need to install Java yourself.
+We recommend you follow the Java installation instructions in the https://docs.archivesspace.org/development/dev/#_top[ArchivesSpace Tech Docs > Development environment overview], using .
+* https://github.com/rbenv/rbenv#installation[rbenv]
+
+== Initial setup
+
+=== Clone this repo to your local machine
+
+All other instructions/commands assume you are in the base directory of the local repo (where this README file lives).
+
+=== Set up an ArchivesSpace development environment
+
+[NOTE]
+====
+We use ArchivesSpace development environment because:
+
+* We need to replace a code file inside the ArchivesSpace application itself
+* Typically we only need to run the backend of ArchivesSpace to use this tool
+* If issues arise, we may wish to use https://docs.archivesspace.org/development/dev/#advanced-debugging-with-pry[pry debugging] to explore what is happening in the ArchivesSpace code.
+====
+
+==== Get the source code for the target version of ArchivesSpace
+
+You can:
+
+* Clone https://github.com/archivesspace/archivesspace (or your fork of it) and create a branch from the commit tagged with your release (Find the commit/tag on the https://github.com/archivesspace/archivesspace/releases[Releases page])
+* Download the source code for the release from the https://github.com/archivesspace/archivesspace/releases[Releases page] and decompress it locally.
+
+==== Replace streaming_import.rb file in source code
+
+Copy this repo's `support/streaming_import.rb` file into your ArchivesSpace source code at `backend/app/lib/streaming_import.rb`.
+
+==== Run ArchivesSpace development environment
+
+`cd` into the base of your source code location and follow https://docs.archivesspace.org/development/dev/#_top[ArchivesSpace Tech Docs instructions for running development environment].
+
+Recommended: Install https://mise.jdx.dev/installing-mise.html[mise] and use it to install Java as per the Tech Docs instructions.
+
+Unless you need to view records in staff UI, public UI, or Solr for some reason, just run the backend/API:
+
+[source,bash]
+----
+./build/run backend:devserver
+----
+
+===== Database
+
+See: https://docs.archivesspace.org/development/dev/#loading-data-fixtures-into-dev-database[Loading data fixtures into dev database]
+
+If you have API access to the source ArchivesSpace instance and want to export directly from that instance, use the target ArchivesSpace database in your dev instance.
+
+You can also:
+
+* Start with the source ArchivesSpace database in your dev instance
+* Export repo(s) from source
+* Stop dev instance
+* Load target ArchivesSpace database in dev instance
+* Restart dev instance
+* Import
+
+[#configproject]
+=== Configure your repo move project
+
+Copy `./sample_config.json` to `~/.config/aspace-repo-move-tools/config.json` and customize your settings.
+
+When you indicate the aspace_version, make sure it begins with "v", e.g. "v4.1.1".
+
+The sample file assumes you'll be switching from source to target ArchivesSpace database in your dev instance, so the login settings are the same for both source and target.
+
+The source section has the ArchivesSpace test server base_uri commented out.
+If want to export from that, uncomment that line and comment out the initially active line.
+
+You can also enter the base_uri and login credentials of any source site you have API access to, in order to export from that site.
+
+[IMPORTANT]
+====
+If you are using a real site with real credentials as source, you are putting those credentials in a plain text file on your computer, which is not great security practice.
+
+Make sure you delete the project config or revert it back to the dummy admin/admin logins as soon as you can!
+====
+
+=== Ensure correct Ruby version is installed
+
+[source,bash]
+.*Installs the version of ruby from this project's .ruby-version file if you don't already have it*
+----
+rbenv install -s
+----
+
+=== Get required Ruby dependencies
+
+[source,bash]
+----
+bundle install
+----
+
+=== Get ArchivesSpace common library for this app to use
+
+If you don't already have the common library for your configured aspace_version, this command retrieves it and puts it in the `/vendor` folder.
+
+[source,bash]
+----
+thor setup common
+----
+
+== Usage
+
+See xref:docs/usage.adoc[Usage documentation page].
+
+== Code history / credit
+
+This code initially started off as a fork of https://github.com/hudmol/repository-importer[hudmol/repository-importer], which was developed by https://hudsonmolonglo.com/[Hudson Molonglo Pty Ltd] in 2016.
+
+https://github.com/mark-cooper[Mark Cooper] and https://github.com/eightBitter[Jacob Shelby] made changes and additions to support Lyrasis use cases and ArchivesSpace in April 2022.
+
+https://github.com/eightBitter[Jacob Shelby] made changes to include Event records in the export process, and to fix resulting import errors by making changes to `streaming_import.rb`
+
+In December 2024, https://github.com/kspurgin[Kristina Spurgin] assumed responsibility for this repository. Because we identified significant changes needed for new use cases, and Hudson Molonglo did not want to maintain the tool/deal with PRs on it, we unforked the project and renamed it to aspace-repo-move-tools. At this time an issue where tree records were not added in the correct order was fixed.
+
+In early 2026, https://github.com/livsolis[Olivia Solis] began to contribute test data to address known and suspected issues given the changes in use case for this tool.
+
+In March 2026, Kristina converted the project to pure Ruby (or JRuby) with a Thor CLI.
