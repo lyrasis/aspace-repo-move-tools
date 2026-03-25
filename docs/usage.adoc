@@ -1,0 +1,124 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Usage
+
+toc::[]
+
+== Make project config changes
+
+xref:../README.doc#configproject[Update config as needed for project.]
+
+== In ArchivesSpace terminal
+=== Spin up dev environment (if not running and ArchivesSpace version has not changed)
+
+
+Start MySQL and Solr in the background:
+
+[bash,source]
+----
+docker-compose -f docker-compose-dev.yml up --detach
+----
+
+All we need is the API running, so:
+
+[bash,source]
+----
+./build/run backend:devserver
+----
+
+[#switchdb]
+=== (as needed) Switch the database that is running in dev environment
+
+If API is running, stop it.
+
+This switches back to the base db in fixtures.
+Change the db name on the end of the 3rd line as needed.
+
+[source,bash]
+----
+mysql -h 127.0.0.1 -u as -pas123 -e "DROP DATABASE archivesspace"
+mysql -h 127.0.0.1 -u as -pas123 -e "CREATE DATABASE IF NOT EXISTS archivesspace DEFAULT CHARACTER SET utf8mb4"
+mysql --host=127.0.0.1 --port=3306  -u root -p123456 archivesspace < ~/code/as/repo-move/spec/support/fixtures/base.sql
+./build/run db:migrate
+./build/run backend:devserver
+----
+
+==== If database you need to load is zipped
+
+Replace the 3rd command in the above block with:
+
+[source,bash]
+----
+gunzip -c /tmp/base.sql.gz | mysql -u as -pas123 archivesspace
+----
+
+=== (as needed) Dump database
+
+[source,bash]
+----
+mysqldump -u root -p123456 archivesspace | gzip > /tmp/db.$(date +%F.%H%M%S).sql.gz
+----
+
+== In terminal for interacting with this tool
+
+=== Make sure you have required dependencies
+
+[source,bash]
+----
+bundle install
+thor setup common
+----
+
+== Export repo
+
+Get id of repo you are exporting:
+
+[source,bash]
+----
+thor repo list -m source
+----
+
+Export the repo (change id value as needed):
+
+[source,bash]
+----
+thor export repo -i 2 -o path/to/export_file.json
+----
+
+== Import exported repo JSON
+
+<<switchdb>>
+
+Create a new repo to import into:
+
+[source,bash]
+----
+thor repo create -c mynewrepo
+----
+
+IMPORTANT: Note the id of the repo created by the previous command.
+
+[TIP]
+====
+You can also set repo name and agent name when you create the repo.
+Run the following for more details on this command:
+
+`thor repo help create`
+====
+
+Import the repo:
+
+[source,bash]
+----
+thor import repo -i 4 -j path/to/export_file.json
+----
