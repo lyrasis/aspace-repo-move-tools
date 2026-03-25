@@ -1,4 +1,7 @@
 {
+  // The version of the ArchivesSpace application. This should be the same for
+  //   source and target before you use this tool.
+  "aspace_version": "v4.1.1",
   // SOURCE is the ArchivesSpace instance that you will EXPORT from,
   // and perhaps pull information from. Source is never modified by this
   // tool.
@@ -27,7 +30,9 @@
   "target_password": "admin",
   "target_base_repo": "",
   // asclient is https://github.com/lyrasis/archivesspace-client
-  // These settings are specific to that tool
+  // This tool is used to connect to and send requests to source/target API
+  // These settings are specific to that tool and can be left as-is unless
+  //   you have a need to change them
   "asclient_page_size": 50,
   "asclient_throttle": 0,
   "asclient_timeout": 60,

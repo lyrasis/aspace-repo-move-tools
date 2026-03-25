@@ -5,7 +5,13 @@ require "pry"
 module RepoMove
   module_function
 
-  def as_version = File.read(File.join(Bundler.root, ".aspace-version"))
+  require_relative "repo_move/config"
+
+  def config
+    @config ||= Config.new.call
+  end
+
+  def as_version = config.aspace_version
 
   ENV["CLASSPATH"] = File.join("vendor", "common-#{as_version}.jar")
   ENV["JAVA_OPTS"] = "-Dfile.encoding=UTF-8 -Xmx4g" # -verbose:gc
@@ -19,8 +25,4 @@ module RepoMove
       req = path.delete_suffix(".rb")
       require req
     end
-
-  def config
-    @config ||= Config.new.call
-  end
 end
