@@ -16,4 +16,14 @@ class Export < Thor
   def repo
     RepoMove::Repo::Exporter.new(options).call
   end
+
+  desc "check", "Run checks on the given JSON file"
+  method_option :json_path,
+    required: true,
+    type: :string,
+    desc: "Path to JSON file to run checks on",
+    aliases: "-j"
+  def check
+    RepoMove::Export::Checker.new(options[:json_path]).call
+  end
 end

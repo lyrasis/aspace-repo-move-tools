@@ -29,6 +29,11 @@
   "target_username": "admin",
   "target_password": "admin",
   "target_base_repo": "",
+  "checks_and_fixes": {
+    "container_profile_collision":
+      // "merge"
+      "disambiguate with repo code"
+  },
   // asclient is https://github.com/lyrasis/archivesspace-client
   // This tool is used to connect to and send requests to source/target API
   // These settings are specific to that tool and can be left as-is unless
