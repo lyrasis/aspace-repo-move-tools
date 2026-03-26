@@ -12,7 +12,7 @@ class Import < Thor
     type: :string,
     desc: "Path to JSON file to be imported",
     aliases: "-j"
-  def import
+  def repo
     RepoMove::Repo::Importer.new(options).call
   end
 end
