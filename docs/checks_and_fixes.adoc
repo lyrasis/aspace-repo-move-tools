@@ -1,0 +1,190 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Checks and fixes configuration
+
+Details on the "checks_and_fixes" section of the config file for this tool.
+
+toc::[]
+
+== Overview
+
+Checks and fixes should be run on exported data, with the target ArchivesSpace database loaded into the development environment instance.
+
+Checks and fixes are run via the following command:
+
+[source,bash]
+----
+thor export check -j exports/file.json
+----
+
+When this command is run, `file.json` is copied to `exports/file.json.orig` before any checks or fixes are run on `file.json`.
+If any fixes that make changes to data are applied, the changes are made to `file.json`.
+
+If any issues are found (and fixed, if so configured), this command outputs a message with a count of issues found, telling you to review `file.json.check_log`.
+
+If no checks are configured to be run, it tells you that.
+
+If no issues are found, it tells you that.
+
+
+[CAUTION]
+====
+The orig file backup process described above is fine if you only run checks once.
+
+If you run checks a second time, the result of the first run (`file.json`) will be copied to `file.json.orig`, overwriting the actual original export file.
+
+If it is important to retain the actual original export file when running checks more than once, make sure you rename the initially created `file.json.orig` file to something else (or move it elsewhere) before running checks a second time.
+====
+
+== Config structure
+
+The "checks_and_fixes" key in the application config file returns a JSON object. Each name/key of that object is a check. The corresponding value for that key is the fix applied to any issues identified by the check.
+
+All possible fixes for a check are present, with only one uncommented.
+
+[source,json]
+----
+  // See docs/checks_and_fixes.adoc for details on these settings
+  "checks_and_fixes": {
+    "container_profile_collision":
+      {"disambiguate": "disambiguation string"}
+      // "log"
+      // NOT YET IMPLEMENTED {"merge": "disambiguation string"}
+    "do_lang_mat_note_type":
+      "drop"
+      // "log"
+      // NOT YET IMPLEMENTED "change_note_type"
+  },
+----
+
+The above would apply the `disambiguate` check to any `container_profile_collision` issues, and the `drop` fix to any `do_lang_mat_note_type` issues.
+
+== Default config
+
+In `./sample_config`, all checks are active, with the "best" possible fix active.
+
+
+The "log" fix doesn't actually fix anything.
+It just writes information about issues identified by the check to the log file.
+(The log file has the same name as the checked file, with ".check_log" added to end.)
+
+Use the "log" fix if you want to see info about the issues without changing the file.
+Note, however, that importing the file will almost certainly fail if any issues are logged.
+
+[TIP]
+====
+If there are a reasonable amount of issues, and no good "fix" available for them yet, you may be able to manually fix the issues in the exported JSON file.
+====
+
+[IMPORTANT]
+====
+All fixes write the issue to the log.
+The "log" fix stops there.
+Any non-"log" fixes also write a subsequent INFO line to the log saying what the fix did.
+====
+
+Planned fixes that don't work yet are commented out and indicate "NOT YET IMPLEMENTED".
+Hopefully obviously, trying to use these will fail.
+Don't uncomment these fixes!
+
+== Changing the config
+
+To disable a check, comment out the check key value and all fix options.
+
+[source,json]
+.We don't need to check for any global record type collisions if we are importing into an empty ArchivesSpace instance
+----
+  "checks_and_fixes": {
+    "container_profile_collision":
+      // {"disambiguate": "disambiguation string"}
+      "log"
+      // NOT YET IMPLEMENTED {"merge": "disambiguation string"}
+    "do_lang_mat_note_type":
+      "drop"
+    // "log"
+    // NOT YET IMPLEMENTED "change_note_type"
+  },
+----
+
+To change which fix to apply to issues found for a check:
+
+* comment the currently active fix
+* uncomment the desired fix
+
+[WARNING]
+====
+Do not comment out checks that only have a "drop" fix.
+
+Skipping these "drop" fixes causes import to fail.
+====
+
+[CAUTION]
+.*Pay attention to trailing commas if you comment/uncomment entire checks with their fixes*
+====
+Commenting the last key/value pair in the `checks_and_fixes` object will leave an invalid comma on the end of the preceding key/value pair, causing your config to be unparseable.
+
+You need to delete that trailing comma to run checks with the last check deactivated.
+
+However, if you later uncomment/reactivate the final check, you need to remember to re-add that comma.
+====
+
+== Checks and fixes - the details
+
+The `log` fix is available for all checks, and doesn't actually fix anything, so will not be listed for each check below.
+
+=== `container_profile_collision`
+
+Container profile records have a global scope and a `name` uniqueness constraint in ArchivesSpace.
+This can cause import errors if you are importing into a non-empty ArchivesSpace instance, as described in https://github.com/lyrasis/aspace-repo-move-tools/issues/19[#19].
+
+[TIP]
+====
+Comment out this check if importing the exported file into an empty ArchivesSpace.
+====
+
+Case and leading/trailing spaces are ignored when checking for duplicate `name` values.
+
+==== `disambiguate`
+
+The specified disambiguation string value is added as a parenthetical suffix to the `name` value flagged as a duplicate.
+
+The `display_string` value is also updated to include the disambiguating parenthetical suffix as part of the name portion of that value.
+
+You can change the disambiguation string value to whatever you like.
+We suggest you choose something that will be easy to find, review, and fix in ArchivesSpace after the import.
+
+==== `merge` (NOT YET IMPLEMENTED)
+
+We compare the `display_string` values of the existing record (in target ArchivesSpace) and exported record. This comparison ignores case and collapses any multiple consecutive spaces into one space.
+
+If the `display_string` values match:
+
+* The "new" container profile record is deleted from the export file
+* All records that referred to the now-deleted record will be updated to refer to the existing container profile record in the target ArchivesSpace
+
+=== `do_lang_mat_note_type` (NOT YET IMPLEMENTED)
+
+Currently these notes are checked for and dropped in the export process itself.
+Dropped notes are logged.
+
+This checks for the issue described in https://github.com/lyrasis/aspace-repo-move-tools/issues/17[#17]
+
+==== `drop` (NOT YET IMPLEMENTED)
+
+The offending note is removed from the digital object record's `lang_materials` section.
+
+The entire digital object record is written to the log, so that users can re-add the dropped notes after import if desired.
+
+==== `change_note_type` (NOT YET IMPLEMENTED)
+
+Changes the `jsonmodel_type` of the offending note to `note_langmaterial`, as that is the only valid `jsonmodel_type` for a note inside a `lang_materials` record.

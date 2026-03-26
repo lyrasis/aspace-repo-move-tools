@@ -95,9 +95,25 @@ Export the repo (change id value as needed):
 thor export repo -i 2 -o path/to/export_file.json
 ----
 
-== Import exported repo JSON
+== Run checks of exported data against target ArchivesSpace
 
 <<switchdb>>
+
+[source,bash]
+----
+thor export check -j path/to/export_file.json
+----
+
+This:
+
+* Copies `export_file.json` to `export_file.json.orig`
+* Runs any checks and fixes from your config file on `export_file.json`
+
+If any issues are found (and fixed, if so configured), this outputs a message with a count of issues found, telling you to review `export_file.json.check_log`.
+
+See xref:checks_and_fixes.adoc[Checks and fixes configuration] for details on that section of the config.
+
+== Import exported repo JSON
 
 Create a new repo to import into:
 
