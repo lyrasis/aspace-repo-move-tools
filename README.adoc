@@ -138,6 +138,8 @@ If want to export from that, uncomment that line and comment out the initially a
 
 You can also enter the base_uri and login credentials of any source site you have API access to, in order to export from that site.
 
+See xref:docs/checks_and_fixes.adoc[Checks and fixes configuration] for details on that section of the config.
+
 [IMPORTANT]
 ====
 If you are using a real site with real credentials as source, you are putting those credentials in a plain text file on your computer, which is not great security practice.

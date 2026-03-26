@@ -29,10 +29,16 @@
   "target_username": "admin",
   "target_password": "admin",
   "target_base_repo": "",
+  // See docs/checks_and_fixes.adoc for details on these settings
   "checks_and_fixes": {
     "container_profile_collision":
-      // "merge"
-      "disambiguate with repo code"
+      {"disambiguate": "disambiguation string"}
+      // "log"
+      // NOT YET IMPLEMENTED {"merge": "disambiguation string"}
+    // "do_lang_mat_note_type":
+    //   "drop"
+    //   // "log"
+    //   // NOT YET IMPLEMENTED "change_note_type"
   },
   // asclient is https://github.com/lyrasis/archivesspace-client
   // This tool is used to connect to and send requests to source/target API
