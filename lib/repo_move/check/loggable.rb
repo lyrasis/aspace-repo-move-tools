@@ -3,7 +3,7 @@
 module RepoMove
   module Check
     module Loggable
-      def log_issue(rec, level = :warn, message = nil, action = nil)
+      def log_issue(rec, level: :warn, message: nil, action: nil)
         msg = if message
           message
         elsif respond_to?(:get_message, true)

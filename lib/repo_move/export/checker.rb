@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "fileutils"
+
 module RepoMove
   module Export
     class Checker
@@ -25,14 +27,20 @@ module RepoMove
           return
         end
 
+        FileUtils.cp(path, "#{path}.orig")
         @json = JSON.parse(File.read(path))
         issue_cts = checks.map do |check, fix|
           CHECKERS[check].new(json: json, logger: log, fix: fix).call
         end
         issues = issue_cts.sum
-        return if issues == 0
+
+        if issues == 0
+          puts "No issues identified"
+          return
+        end
 
         puts "#{issues} issues. Check #{path}.check_log"
+        File.open(path, "w") { |f| f << JSON.pretty_generate(json) }
       end
 
       private

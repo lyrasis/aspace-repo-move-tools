@@ -44,14 +44,14 @@ module RepoMove
         list.parsed
           .map do |id|
             rec = client.get("/container_profiles/#{id}").parsed
-            [rec["name"], rec]
+            [rec["name"].strip.downcase, rec]
           end.to_h
       end
 
       def source_cps
         json.select do |rec|
           rec["jsonmodel_type"] == "container_profile"
-        end.map { |rec| [rec["name"], rec] }
+        end.map { |rec| [rec["name"].strip.downcase, rec] }
           .to_h
       end
 
@@ -64,12 +64,30 @@ module RepoMove
       end
 
       def do_hash_fix(issues)
-        # todo
+        send(fix.keys.first, fix.values.first, issues)
       end
 
       def log(issues)
         issues.each do |name, rec|
           log_issue(rec)
+        end
+      end
+
+      def disambiguate(str, issues)
+        suffix = " (#{str})"
+
+        json.map! do |rec|
+          next rec unless rec["jsonmodel_type"] == "container_profile" &&
+            issues.keys.include?(rec["name"].strip.downcase)
+
+          currentname = rec["name"]
+          newname = "#{rec["name"]}#{suffix}"
+          rec["name"] = newname
+          newdisplay =
+            "#{newname}#{rec["display_string"].delete_prefix(currentname)}"
+          rec["display_string"] = newdisplay
+          log_issue(rec, action: "Changed name value to #{newname}")
+          rec
         end
       end
     end
