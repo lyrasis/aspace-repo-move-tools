@@ -52,11 +52,10 @@ module RepoMove
         end
 
         puts "Cleaning records for output..."
-        exported_records.map { |rec| clean(rec) }
+        exported_records.map! { |rec| clean(rec) }
+        data = JSON.pretty_generate(exported_records.to_a)
         File.open(path, "w") do |f|
-          f << exported_records.to_a
-            .to_json
-            .gsub(repo_uri, REPO_PLACEHOLDER)
+          f << data.gsub(repo_uri, REPO_PLACEHOLDER)
         end
 
         unless warning_ct == 0
@@ -162,6 +161,11 @@ module RepoMove
 
       def clean(rec)
         rec.delete("id")
+
+        if rec.key?("created_for_collection")
+          rec.delete("created_for_collection")
+        end
+
         clean_repo_refs(rec)
 
         # Skip related accessions so the import doesn't duplicate related
