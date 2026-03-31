@@ -6,7 +6,6 @@ require_relative "permissive_validator"
 require "jsonmodel"
 
 module RepoMove
-  module Repo
     module JsonModelable
       include JSONModel
 
@@ -47,5 +46,4 @@ module RepoMove
         end
       end
     end
-  end
 end
