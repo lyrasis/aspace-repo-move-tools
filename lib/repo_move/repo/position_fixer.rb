@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "json_modelable"
+require_relative "../json_modelable"
 
 module RepoMove
   module Repo
