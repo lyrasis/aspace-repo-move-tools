@@ -21,7 +21,7 @@ module RepoMove
 
       def call
         login
-        ingested_json.select { |rec| rec.key?("position") }
+        ingested_json.select { |rec| tree_rec?(rec) }
           .group_by { |rec| rec["ancestors"].first["ref"] }
           .each { |parent, children| handle_children(parent, children) }
         puts "-- DONE FIXING MISCALCULATED POSITIONS"
@@ -30,6 +30,10 @@ module RepoMove
       private
 
       attr_reader :id, :json_path, :map_path
+
+      def tree_rec?(rec)
+        rec.key?("position") && rec.key?("ancestors")
+      end
 
       def ingested_json
         JSON.parse(
