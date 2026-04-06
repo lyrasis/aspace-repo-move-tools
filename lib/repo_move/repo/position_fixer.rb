@@ -21,18 +21,34 @@ module RepoMove
 
       def call
         login
-        ingested_json.select { |rec| tree_rec?(rec) }
-          .group_by { |rec| rec["ancestors"].first["ref"] }
-          .each { |parent, children| handle_children(parent, children) }
-        puts "-- DONE FIXING MISCALCULATED POSITIONS"
+        check_and_fix_child_recs
+        check_and_fix_tree_recs
       end
 
       private
 
       attr_reader :id, :json_path, :map_path
 
+      def check_and_fix_tree_recs
+        ingested_json.select { |rec| tree_rec?(rec) }
+          .group_by { |rec| rec["ancestors"].first["ref"] }
+          .each { |parent, children| handle_children(parent, children) }
+        puts "-- DONE FIXING MISCALCULATED POSITIONS IN TREE RECORDS"
+      end
+
+      def check_and_fix_child_recs
+        ingested_json.select { |rec| child_rec?(rec) }
+          .group_by { |rec| rec["parent"]["ref"] }
+          .each { |parent, children| handle_children(parent, children) }
+        puts "-- DONE FIXING MISCALCULATED POSITIONS IN CHILD RECORDS"
+      end
+
       def tree_rec?(rec)
         rec.key?("position") && rec.key?("ancestors")
+      end
+
+      def child_rec?(rec)
+        rec.key?("position") && rec.key?("parent")
       end
 
       def ingested_json
@@ -82,7 +98,7 @@ module RepoMove
 
       def get_child_endpoint_path(parent)
         path = case parent
-        when %r{/archival_objects/}
+        when %r{/(archival_objects|classification_terms)/}
           URI(File.join(parent, "children"))
         else # resource, classification, digital object
           URI(File.join(parent, "tree", "root"))
@@ -92,7 +108,7 @@ module RepoMove
 
       def process_response(parent, _path, response)
         case parent
-        when %r{/archival_objects/}
+        when %r{/archival_objects|classification_terms/}
           response.map { |rec| rec["uri"] }
         else # resource, classification, digital object
           extract_children_from_waypoints(parent, response)
