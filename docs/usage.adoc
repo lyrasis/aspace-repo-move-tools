@@ -48,7 +48,7 @@ Change the db name on the end of the 3rd line as needed.
 ----
 mysql -h 127.0.0.1 -u as -pas123 -e "DROP DATABASE archivesspace"
 mysql -h 127.0.0.1 -u as -pas123 -e "CREATE DATABASE IF NOT EXISTS archivesspace DEFAULT CHARACTER SET utf8mb4"
-mysql --host=127.0.0.1 --port=3306  -u root -p123456 archivesspace < ~/code/as/repo-move/spec/support/fixtures/base.sql
+mysql -h 127.0.0.1 --port=3306  -u root -p123456 archivesspace < ~/code/as/repo-move/spec/support/fixtures/base.sql
 ./build/run db:migrate
 ./build/run backend:devserver
 ----
@@ -59,14 +59,21 @@ Replace the 3rd command in the above block with:
 
 [source,bash]
 ----
-gunzip -c /tmp/base.sql.gz | mysql -u as -pas123 archivesspace
+gunzip -c zipped.sql.gz | mysql -h 127.0.0.1 --port=3306 -u root -p123456
+----
+
+==== Switch admin password in database
+
+[source,bash]
+----
+./build/run db:user_password_reset -Dusername='admin' -Dpassword='admin'
 ----
 
 === (as needed) Dump database
 
 [source,bash]
 ----
-mysqldump -u root -p123456 archivesspace | gzip > /tmp/db.$(date +%F.%H%M%S).sql.gz
+mysqldump --host=127.0.0.1 --port=3306 -u root -p123456 archivesspace | gzip > /tmp/db.$(date +%F.%H%M%S).sql.gz
 ----
 
 == In terminal for interacting with this tool
